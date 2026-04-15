@@ -1,0 +1,68 @@
+@use 'rs';
+
+/* Partner CSS */
+.partner-section {
+    padding-top: 70px;
+
+    @media #{rs.$bp-xl} {
+        padding-top: 100px;
+    }
+
+    h5 {
+        line-height: 1.5;
+    }
+}
+
+.partner-content {
+    p {
+        font-size: 20px;
+        font-weight: 600;
+        flex-shrink: 0;
+        color: var(--Heading);
+    }
+
+    a {
+        display: block;
+        text-align: center;
+
+        img {
+            max-height: 24px;
+            filter: grayscale(1);
+
+            @media #{rs.$bp-xxl} {
+                max-height: 30px;
+            }
+        }
+
+        &:hover,
+        &:focus {
+            transform: translateX(-5px);
+        }
+    }
+
+    &.style-two {
+        margin-top: 70px;
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+
+        @media #{rs.$bp-xl} {
+            margin-top: 100px;
+        }
+
+        .partner-title {
+            flex-shrink: 0;
+            padding: 40px 24px;
+            border: 1px solid var(--Border);
+        }
+
+        .partner-swiper {
+            border: 1px solid var(--Border);
+            border-left: 0;
+            border-radius: 0 10rem 10rem 0;
+            padding: 54px 24px;
+            display: flex;
+            align-items: center;
+        }
+    }
+}

@@ -1,0 +1,105 @@
+/* ---------------------
+   [Master Stylesheet]
+   Template Name: Bizora - Business Consulting Next Template
+   Version: 0.0.1
+   Author: DevStarIT
+--------------------- */
+
+/* ---------------------
+   [Table of Contents]
+
+   1. Global Elements
+      1.1 Responsive Breakpoint CSS
+      1.2 Reboot CSS
+      1.3 Miscellaneous CSS
+      1.4 Preloader CSS
+      1.5 Jarallax CSS
+   2. Core CSS
+      2.1 Header CSS
+      2.2 Hero CSS
+      2.3 About CSS
+      2.4 Process CSS
+      2.5 Team CSS
+      2.6 Testimonial CSS
+      2.7 Video CSS
+      2.8 Blog CSS
+      2.9 Footer CSS
+      2.10 CTA CSS
+      2.11 Cookie CSS
+      2.12 Contact CSS
+      2.13 FAQ CSS
+      2.14 Breadcrumb CSS
+      2.15 Partner CSS
+      2.16 Project CSS
+      2.17 Newsletter CSS
+      2.18 Pricing CSS
+      2.19 Theme CSS
+--------------------- */
+
+@use "bootstrap/scss/bootstrap";
+
+@use 'rs';
+@use 'reboot';
+@use 'miscellaneous';
+@use 'preloader';
+@use 'jarallax';
+@use 'header';
+@use 'hero';
+@use 'about';
+@use 'process';
+@use 'team';
+@use 'testimonial';
+@use 'video';
+@use 'blog';
+@use 'footer';
+@use 'cta';
+@use 'cookie';
+@use 'contact';
+@use 'faq';
+@use 'breadcrumb';
+@use 'partner';
+@use 'features';
+@use 'service';
+@use 'project';
+@use 'pricing';
+
+// Google Fonts
+//@import url('https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap');
+
+.team-one-bg {
+  background-image: url('../img/core-img/shape2.png');
+}
+
+.testimonial-one-bg {
+  background-image: url('../img/bg-img/19.jpg');
+}
+
+.testimonial-two-bg {
+  background-image: url('../img/bg-img/28.jpg');
+}
+.hero-two-bg {
+  background-image: url('../img/bg-img/4.jpg');
+}
+.hero-three-bg-5 {
+  background-image: url('../img/bg-img/5.jpg');
+}
+.hero-three-bg-1 {
+  background-image: url('../img/bg-img/1.jpg');
+}
+.footer-two-bg {
+  background-image: url('../img/bg-img/24.jpg');
+}
+.video-bg-one {
+  background-image: url('../img/bg-img/43.jpg');
+}
+.faq-bg-3 {
+  background-image: url('../img/core-img/plus.png');
+}
+
+.breadcrumb-bg {
+  background-image: url('../img/bg-img/54.jpg');
+}
+
+.service-details-bg {
+  background-image: url('../img/bg-img/74.jpg');
+}
