@@ -3,7 +3,7 @@ import Image from "next/image";
 import bgImg40 from "@/assets/img/bg-img/40.jpg";
 import bgImg41 from "@/assets/img/bg-img/41.jpg";
 import bgImg42 from "@/assets/img/bg-img/42.jpg";
-
+import Link from "next/link";
 export default function ServiceSectionThree() {
     return (
         <section className="service-section">
@@ -23,10 +23,10 @@ export default function ServiceSectionThree() {
                     {/*-- Pricing Plan Switching --*/}
                     <div className="col-12 col-sm-5">
                         <div className="text-sm-end">
-                            <a href="/services" className="btn btn-primary">
+                             <Link href="/services/">View More</Link>
                                 <span>View All Services</span>
                                 <span>View All Services</span>
-                            </a>
+                            
                         </div>
                     </div>
                 </div>
