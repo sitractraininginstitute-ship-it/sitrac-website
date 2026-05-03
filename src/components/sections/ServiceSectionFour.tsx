@@ -41,8 +41,8 @@ export default function ServiceSectionFour() {
                                     </defs>
                                 </svg>
                             </div>
-                            <h4>Training & Capacity Building Programs</h4>
-                            <p className="mb-4">We deliver high-impact training programs designed to strengthen institutional capacity, enhance workforce productivity, and equip professionals with practical, results-oriented skills across the public and private sectors.</p>
+                            <h4>Claims Management Masterclass</h4>
+                            <p className="mb-4">A specialized, high-impact programme equipping insurance and financial services professionals with the technical knowledge and practical skills to manage claims processes efficiently, ethically, and in full regulatory compliance.</p>
                             {/*-- Button --*/}
                             <Link href="/services/details" className="btn-view-more">
                                 <span><i className="ti ti-plus"></i></span>
@@ -75,8 +75,8 @@ export default function ServiceSectionFour() {
                                     </defs>
                                 </svg>
                             </div>
-                            <h4>Management Consultancy Services</h4>
-                            <p className="mb-4">Our consultancy services support organizations in improving performance, governance, and operational efficiency through strategic advisory, policy development, and institutional strengthening solutions.</p>
+                            <h4>Modern Customer Service Training</h4>
+                            <p className="mb-4">A transformative programme designed to equip frontline staff and customer-facing teams with the skills, mindset, and tools required to deliver exceptional service experiences consistently across all sectors.</p>
                             {/*-- Button --*/}
                             <Link href="/services/details" className="btn-view-more">
                                 <span><i className="ti ti-plus"></i></span>
@@ -109,8 +109,8 @@ export default function ServiceSectionFour() {
                                     </defs>
                                 </svg>
                             </div>
-                            <h4>SME Development & Entrepreneurship</h4>
-                            <p className="mb-4">SITRAC supports entrepreneurs and small businesses through practical training programs that enhance business management skills, innovation, financial literacy, and sustainable enterprise growth.</p>
+                            <h4>Retirement Readiness Programme</h4>
+                            <p className="mb-4">A comprehensive financial and personal planning programme supporting employees in preparing for retirement — covering pension management, investment strategies, health planning, and post-retirement income generation.</p>
                             {/*-- Button --*/}
                             <Link href="/services/details" className="btn-view-more">
                                 <span><i className="ti ti-plus"></i></span>
@@ -146,8 +146,8 @@ export default function ServiceSectionFour() {
                                     </defs>
                                 </svg>
                             </div>
-                            <h4>ICT & Digital Transformation Training</h4>
-                            <p className="mb-4">We provide specialized training in ICT for business, enabling organizations to leverage digital tools, improve efficiency, and adapt to the rapidly evolving digital economy.</p>
+                            <h4>Administration Training</h4>
+                            <p className="mb-4">A professional development programme building the competencies of administrative and office management staff — covering office systems, correspondence, time management, and organizational protocols at all career levels.</p>
                             {/*-- Button --*/}
                             <Link href="/services/details" className="btn-view-more">
                                 <span><i className="ti ti-plus"></i></span>
@@ -179,8 +179,8 @@ export default function ServiceSectionFour() {
                                     </defs>
                                 </svg>
                             </div>
-                            <h4>Benchmarking & International Programs</h4>
-                            <p className="mb-4">Our benchmarking programs expose institutions to global best practices through study visits, knowledge exchange, and international learning experiences that drive innovation and competitiveness.</p>
+                            <h4>Modern Records Management Training</h4>
+                            <p className="mb-4">An essential programme equipping professionals with the knowledge to design, implement, and manage records systems that meet operational, legal, and data protection compliance standards in today's digital environment.</p>
                             {/*-- Button --*/}
                             <Link href="/services-details" className="btn-view-more">
                                 <span><i className="ti ti-plus"></i></span>
@@ -218,8 +218,8 @@ export default function ServiceSectionFour() {
                                     </defs>
                                 </svg>
                             </div>
-                            <h4>Customized In-House Training</h4>
-                            <p className="mb-4">We design and deliver tailored training solutions aligned with your organization’s specific needs, ensuring maximum relevance, impact, and measurable outcomes.</p>
+                            <h4>Finance Training</h4>
+                            <p className="mb-4">Practical, scenario-based finance training building competence in budgeting, financial reporting, public financial management, donor compliance, and internal controls for finance officers and non-finance managers alike.</p>
                             {/*-- Button --*/}
                             <Link href="/services/details" className="btn-view-more">
                                 <span><i className="ti ti-plus"></i></span>

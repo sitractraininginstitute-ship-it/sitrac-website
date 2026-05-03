@@ -15,8 +15,7 @@ export default function BlogSectionTwo() {
                     <div className="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-7 col-xxl-6">
                         <div className="section-heading text-center">
                             <span className="subtitle fadeInUp" data-delay="0.3">Latest Blog</span>
-                            <h2 className="mb-0 fadeInUp" data-delay="0.5">Take a look at the latest articles from
-                                blog</h2>
+                            <h2 className="mb-0 fadeInUp" data-delay="0.5">Insights, trends and expert perspectives from the SITRAC team</h2>
                         </div>
                     </div>
                 </div>
@@ -33,12 +32,11 @@ export default function BlogSectionTwo() {
                             <Image src={bgImg25} alt="" className="h-auto"/>
                             <div className="blog-body">
                                 <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Consulting</a>
+                                    <a href="#" className="post-category">Claims Management</a>
                                     <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
+                                    <a className="post-date" href="#">12 July 2025</a>
                                 </div>
-                                <Link href="/blog/details" className="post-title">The Role of Data in Modern Marketing
-                                    Campaign</Link>
+                                <Link href="/blog/details" className="post-title">Why Claims Handling Excellence Is the New Competitive Edge in Insurance</Link>
                                 {/*-- Button --*/}
                                 <div className="d-block mt-4">
                                     <Link href="/blog/details" className="btn-view-more">
@@ -56,12 +54,11 @@ export default function BlogSectionTwo() {
                             <Image src={bgImg26} alt="" className="h-auto"/>
                             <div className="blog-body">
                                 <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Consulting</a>
+                                    <a href="#" className="post-category">Retirement Planning</a>
                                     <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
+                                    <a className="post-date" href="#">28 June 2025</a>
                                 </div>
-                                <Link href="/blog/details" className="post-title">The Role of Data in Modern Marketing
-                                    Campaign</Link>
+                                <Link href="/blog/details" className="post-title">Retirement Readiness in Kenya: Are Your Employees Truly Prepared?</Link>
                                 {/*-- Button --*/}
                                 <div className="d-block mt-4">
                                     <Link href="/blog/details" className="btn-view-more">
@@ -79,12 +76,11 @@ export default function BlogSectionTwo() {
                             <Image src={bgImg27} alt="" className="h-auto"/>
                             <div className="blog-body">
                                 <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Consulting</a>
+                                    <a href="#" className="post-category">Human Resources</a>
                                     <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
+                                    <a className="post-date" href="#">10 June 2025</a>
                                 </div>
-                                <Link href="/blog/details" className="post-title">The Role of Data in Modern Marketing
-                                    Campaign</Link>
+                                <Link href="/blog/details" className="post-title">Building a High-Performance Workforce: The Role of HR Training in Modern Organizations</Link>
                                 {/*-- Button --*/}
                                 <div className="d-block mt-4">
                                     <Link href="/blog/details" className="btn-view-more">

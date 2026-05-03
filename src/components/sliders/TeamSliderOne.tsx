@@ -13,14 +13,14 @@ import imgBg16 from "@/assets/img/bg-img/16.jpg";
 export default function TeamSliderOne() {
 
     const teamMembers = [
-        { img: imgBg13, name: "Miler Michel", role: "Front end Developer" },
-        { img: imgBg14, name: "Sarah Connor", role: "Front end Developer" },
-        { img: imgBg15, name: "Affan Islam", role: "Front end Developer" },
-        { img: imgBg16, name: "Michel Bom", role: "Front end Developer" },
-        { img: imgBg13, name: "Miler Michel", role: "Front end Developer" },
-        { img: imgBg14, name: "Sarah Connor", role: "Front end Developer" },
-        { img: imgBg15, name: "Affan Islam", role: "Front end Developer" },
-        { img: imgBg16, name: "Michel Bom", role: "Front end Developer" },
+        { img: imgBg13, name: "Hon. Wendy Komen", role: "Director of Training" },
+        { img: imgBg14, name: "Dr. Wesley Keitany", role: "Senior Consultant" },
+        { img: imgBg15, name: "Prof. Buziba Charles", role: "Lead Senior Consultant & Trainer" },
+        { img: imgBg16, name: "Ms. Catherine Weru", role: "Senior Consultant" },
+        { img: imgBg13, name: "Hon. Wendy Komen", role: "Director of Training" },
+        { img: imgBg14, name: "Dr. Wesley Keitany", role: "Senior Consultant" },
+        { img: imgBg15, name: "Prof. Buziba Charles", role: "Lead Senior Consultant & Trainer" },
+        { img: imgBg16, name: "Ms. Catherine Weru", role: "Senior Consultant" },
     ];
 
     return (

@@ -25,9 +25,8 @@ export default function AboutSectionThree() {
                         {/*-- Section Heading --*/}
                         <div className="section-heading ps-xl-5">
                             <span className="subtitle">About us</span>
-                            <h2 className="mb-4 color-change">Capacity Building for Strong Institutions</h2>
-                            <p className="mb-5">We support institutions with practical training and development solutions that improve performance, governance, and service delivery.
-                            </p>
+                            <h2 className="mb-4 color-change">Empowering People. Strengthening Institutions. Driving Change.</h2>
+                            <p className="mb-5">SITRAC Training Institute is a premier professional training and institutional development organization headquartered in Nairobi, Kenya. We deliver high-impact training programmes, strategic consultancy, and tailored institutional development solutions to governments, NGOs, private sector entities, and development partners across East and Central Africa.</p>
                         </div>
 
                         <div className="ps-xl-5">
@@ -57,12 +56,12 @@ export default function AboutSectionThree() {
                                                 </g>
                                                 <defs>
                                                     <clipPath id="clip0_1_1779">
-                                                        <rect width="28" height="28" fill="white"/>
+                                                        <rect width="48" height="48" fill="white"/>
                                                     </clipPath>
                                                 </defs>
                                             </symbol>
                                         </svg>
-                                        Enhances staff performance
+                                        Evidence-based, context-responsive training
                                     </li>
                                     <li>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="d-none" width="28"
@@ -84,12 +83,12 @@ export default function AboutSectionThree() {
                                                 </g>
                                                 <defs>
                                                     <clipPath id="clip0_1_1779">
-                                                        <rect width="28" height="28" fill="white"/>
+                                                        <rect width="48" height="48" fill="white"/>
                                                     </clipPath>
                                                 </defs>
                                             </symbol>
                                         </svg>
-                                        Strengthens institutional capacity
+                                        800+ professionals trained across 17 countries
                                     </li>
                                     <li>
                                         <svg xmlns="http://www.w3.org/2000/svg" className="d-block" width="28"
@@ -111,12 +110,12 @@ export default function AboutSectionThree() {
                                                 </g>
                                                 <defs>
                                                     <clipPath id="clip0_1_1779">
-                                                        <rect width="28" height="28" fill="white"/>
+                                                        <rect width="48" height="48" fill="white"/>
                                                     </clipPath>
                                                 </defs>
                                             </symbol>
                                         </svg>
-                                        Improves service delivery
+                                        Trusted by UN agencies, donors & governments
                                     </li>
                                 </ul>
                             </div>

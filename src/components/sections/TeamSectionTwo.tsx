@@ -22,8 +22,8 @@ export default function TeamSectionTwo() {
                                 <a href="#"><i className="ti ti-brand-instagram"></i></a>
                             </div>
                             <div className="team-body">
-                                <h5>Dr. Grace Wanjiku</h5>
-                                <p className="mb-0">Executive Director</p>
+                                <h5>Hon. Wendy Komen</h5>
+                                <p className="mb-0">Director of Training</p>
                             </div>
                         </div>
                     </div>
@@ -38,8 +38,8 @@ export default function TeamSectionTwo() {
                                 <a href="#"><i className="ti ti-brand-instagram"></i></a>
                             </div>
                             <div className="team-body">
-                                <h5>David Mwangi</h5>
-                                <p className="mb-0">Program Manager – Capacity Building</p>
+                                <h5>Dr. Wesley Keitany</h5>
+                                <p className="mb-0">Senior Consultant</p>
                             </div>
                         </div>
                     </div>
@@ -54,8 +54,8 @@ export default function TeamSectionTwo() {
                                 <a href="#"><i className="ti ti-brand-instagram"></i></a>
                             </div>
                             <div className="team-body">
-                                <h5>Amina Noor</h5>
-                                <p className="mb-0">Monitoring & Evaluation Specialist</p>
+                                <h5>Prof. Buziba Charles</h5>
+                                <p className="mb-0">Lead Senior Consultant & Trainer</p>
                             </div>
                         </div>
                     </div>
@@ -70,8 +70,8 @@ export default function TeamSectionTwo() {
                                 <a href="#"><i className="ti ti-brand-instagram"></i></a>
                             </div>
                             <div className="team-body">
-                                <h5>Brian Otieno</h5>
-                                <p className="mb-0">Communications & Outreach Officer</p>
+                                <h5>Ms. Catherine Weru</h5>
+                                <p className="mb-0">Senior Consultant</p>
                             </div>
                         </div>
                     </div>

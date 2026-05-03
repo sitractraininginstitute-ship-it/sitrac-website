@@ -1,3 +1,4 @@
+
 import PartnerSliderOne from "@/components/sliders/PartnerSliderOne";
 import Image from "next/image";
 import bgImg40 from "@/assets/img/bg-img/40.jpg";
@@ -40,8 +41,8 @@ export default function ServiceSectionThree() {
                     {/*-- Service Card --*/}
                     <div className="col-12 col-md-6 col-lg-4 translateY8">
                         <div className="service-card-two fadeInUp" data-delay="0.5">
-                            <h4 className="mb-3">Training & Capacity Building</h4>
-                            <p className="mb-4">We deliver structured training programs for governments, institutions, and organizations aimed at strengthening leadership, governance, and performance.</p>
+                            <h4 className="mb-3">Claims Management Masterclass</h4>
+                            <p className="mb-4">A specialized, high-impact programme equipping insurance and financial services professionals with the technical knowledge and practical skills to manage claims processes efficiently, ethically, and in full regulatory compliance.</p>
                             <Image className="tilt-image h-auto" src={bgImg40} alt=""/>
                         </div>
                     </div>
@@ -49,8 +50,8 @@ export default function ServiceSectionThree() {
                     {/*-- Service Card --*/}
                     <div className="col-12 col-md-6 col-lg-4 translateY8">
                         <div className="service-card-two fadeInUp" data-delay="0.75">
-                            <h4 className="mb-3">Management Consultancy</h4>
-                            <p className="mb-4">We provide expert advisory services in strategic planning, governance, human resources, finance, and institutional development.</p>
+                            <h4 className="mb-3">Modern Customer Service Training</h4>
+                            <p className="mb-4">A transformative programme designed to equip frontline staff and customer-facing teams with the skills, mindset, and tools required to deliver exceptional service experiences consistently across all sectors.</p>
                             <Image className="tilt-image h-auto" src={bgImg41} alt=""/>
                         </div>
                     </div>
@@ -58,8 +59,8 @@ export default function ServiceSectionThree() {
                     {/*-- Service Card --*/}
                     <div className="col-12 col-md-6 col-lg-4 translateY8">
                         <div className="service-card-two fadeInUp" data-delay="1">
-                            <h4 className="mb-3">ICT & Digital Transformation</h4>
-                            <p className="mb-4">We support organizations in adopting digital systems, cybersecurity frameworks, and data-driven operations for improved efficiency.</p>
+                            <h4 className="mb-3">Retirement Readiness Programme</h4>
+                            <p className="mb-4">A comprehensive financial and personal planning programme supporting employees in preparing for retirement — covering pension management, investment strategies, health planning, and post-retirement income generation.</p>
                             <Image className="tilt-image h-auto" src={bgImg42} alt=""/>
                         </div>
                     </div>
