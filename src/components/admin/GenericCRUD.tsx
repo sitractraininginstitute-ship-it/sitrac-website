@@ -7,12 +7,12 @@ import { useState } from "react";
 export interface FieldDef {
     key:          string;
     label:        string;
-    type:         "text" | "email" | "textarea" | "number" | "url" | "checkbox" | "select" | "image" | "date";
+    type:         "text" | "email" | "textarea" | "number" | "url" | "checkbox" | "select" | "image" | "date" | "document";
     required?:    boolean;
     options?:     string[];   // for select
     placeholder?: string;
     rows?:        number;     // for textarea
-    folder?:      string;     // for image — Cloudinary folder hint (services/team/blog/misc)
+    folder?:      string;     // for image / document — Cloudinary folder hint
 }
 
 interface GenericCRUDProps {
@@ -119,6 +119,93 @@ function ImageUploadField({
                     onChange={handleFile}
                     disabled={uploading}
                 />
+            </label>
+
+            {uploadErr && (
+                <p style={{ color: "#dc2626", fontSize: "0.8rem", marginTop: "0.35rem", marginBottom: 0 }}>
+                    {uploadErr}
+                </p>
+            )}
+        </div>
+    );
+}
+
+// ── Document (PDF) Upload Field ─────────────────────────────────────────────
+
+function DocumentUploadField({
+
+    value,
+    onChange,
+    folder = "events",
+}: {
+    value:   string;
+    onChange: (url: string) => void;
+    folder?:  string;
+}) {
+    const [uploading, setUploading] = useState(false);
+    const [uploadErr, setUploadErr] = useState("");
+
+    async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploading(true);
+        setUploadErr("");
+        try {
+            const fd = new FormData();
+            fd.append("file", file);
+            fd.append("folder", folder);
+            const res  = await fetch("/api/upload", { method: "POST", body: fd });
+            const data = await res.json();
+            if (!res.ok) { setUploadErr(data?.error ?? "Upload failed"); return; }
+            const url = data?.data?.url ?? data?.url ?? "";
+            onChange(url);
+        } catch {
+            setUploadErr("Upload failed. Please try again.");
+        } finally {
+            setUploading(false);
+            e.target.value = "";
+        }
+    }
+
+    return (
+        <div>
+            {/* Current file link */}
+            {value && (
+                <div style={{ marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <i className="ti ti-file-type-pdf" style={{ color: "#dc2626", fontSize: "1.2rem" }} />
+                    <a href={value} target="_blank" rel="noopener noreferrer"
+                        style={{ fontSize: "0.82rem", color: "#052E26", wordBreak: "break-all" }}>
+                        View current PDF
+                    </a>
+                    <button type="button" onClick={() => onChange("")}
+                        style={{ background: "none", border: "none", color: "#9ca3af", cursor: "pointer", fontSize: "0.75rem" }}>
+                        ✕ Remove
+                    </button>
+                </div>
+            )}
+
+            {/* Manual URL paste */}
+            <input type="url" className="form-control"
+                placeholder="https://res.cloudinary.com/... (or upload below)"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                style={{ borderRadius: "8px", marginBottom: "0.5rem", fontSize: "0.85rem" }}
+            />
+
+            {/* PDF file picker */}
+            <label style={{
+                display: "inline-flex", alignItems: "center", gap: "0.4rem",
+                background: uploading ? "#e5e7eb" : "#fef2f2",
+                color: uploading ? "#9ca3af" : "#dc2626",
+                borderRadius: "8px", padding: "0.45rem 0.9rem",
+                fontSize: "0.82rem", fontWeight: 600,
+                cursor: uploading ? "not-allowed" : "pointer",
+                userSelect: "none", border: "1px solid #fca5a5",
+            }}>
+                <i className="ti ti-upload" />
+                {uploading ? "Uploading PDF…" : "Upload PDF (max 10MB)"}
+                <input type="file" accept="application/pdf,.pdf" style={{ display: "none" }}
+                    onChange={handleFile} disabled={uploading} />
             </label>
 
             {uploadErr && (
@@ -492,6 +579,12 @@ export default function GenericCRUD({
                                                 onChange={(url) => handleChange(f.key, url)}
                                                 placeholder={f.placeholder}
                                                 folder={f.folder ?? "misc"}
+                                            />
+                                        ) : f.type === "document" ? (
+                                            <DocumentUploadField
+                                                value={String(formData[f.key] ?? "")}
+                                                onChange={(url) => handleChange(f.key, url)}
+                                                folder={f.folder ?? "events"}
                                             />
                                         ) : f.type === "textarea" ? (
                                             <textarea

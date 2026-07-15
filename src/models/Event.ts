@@ -17,6 +17,9 @@ const EventSchema = new Schema(
         registrationLink: { type: String },
         coverImage:       { type: String, required: true },
         featured:         { type: Boolean, default: false },
+        // Optional PDF attachment (brochure / info sheet)
+        attachmentUrl:    { type: String },
+        attachmentName:   { type: String },
     },
     { timestamps: true }
 );

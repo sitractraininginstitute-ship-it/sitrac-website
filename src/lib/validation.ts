@@ -63,6 +63,9 @@ export const eventSchema = z.object({
     registrationLink: z.string().optional(),
     coverImage:       z.string().min(1),
     featured:         z.boolean().optional(),
+    // Optional PDF attachment (brochure / info sheet)
+    attachmentUrl:    z.string().optional(),
+    attachmentName:   z.string().optional(),
 });
 
 export type EventInput = z.infer<typeof eventSchema>;

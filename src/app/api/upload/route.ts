@@ -5,7 +5,7 @@ import { jsonOk, jsonError } from "@/lib/apiResponse";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const ALLOWED_TYPES = new Set([
+const ALLOWED_IMAGE_TYPES = new Set([
     "image/jpeg",
     "image/jpg",
     "image/png",
@@ -13,7 +13,10 @@ const ALLOWED_TYPES = new Set([
     "image/gif",
 ]);
 
-const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+const PDF_TYPE = "application/pdf";
+
+const IMAGE_MAX_BYTES = 5  * 1024 * 1024; // 5 MB  (images)
+const PDF_MAX_BYTES   = 10 * 1024 * 1024; // 10 MB (PDF brochures can be larger)
 
 // Valid section folders — prefixed with "sitrac/" in Cloudinary
 const VALID_FOLDERS = new Set([
@@ -48,13 +51,15 @@ export async function POST(request: NextRequest) {
 
     // 3. Validate MIME type
     const mimeType = file.type;
-    if (!ALLOWED_TYPES.has(mimeType)) {
-        return jsonError("Only image files are allowed (jpeg, png, webp, gif)", 400);
+    const isPdf    = mimeType === PDF_TYPE;
+    if (!ALLOWED_IMAGE_TYPES.has(mimeType) && !isPdf) {
+        return jsonError("Only image files (jpeg, png, webp, gif) and PDF documents are allowed", 400);
     }
 
-    // 4. Validate file size
-    if (file.size > MAX_BYTES) {
-        return jsonError("File must be under 5MB", 400);
+    // 4. Validate file size (PDFs get a larger limit)
+    const maxBytes = isPdf ? PDF_MAX_BYTES : IMAGE_MAX_BYTES;
+    if (file.size > maxBytes) {
+        return jsonError(`File must be under ${isPdf ? "10" : "5"}MB`, 400);
     }
 
     // 5. Resolve folder — default to "misc", namespace all under "sitrac/"
@@ -75,14 +80,16 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. Upload to Cloudinary
+    //    Images use default resource_type "image".
+    //    PDFs must use resource_type "raw" — Cloudinary rejects PDF uploads
+    //    under the image resource type.
     try {
         const result = await cloudinary.uploader.upload(dataUri, {
             folder,
-            // Use the original filename (without extension) as a hint,
-            // but let Cloudinary generate the final public_id.
             use_filename:      true,
             unique_filename:   true,
             overwrite:         false,
+            ...(isPdf ? { resource_type: "raw" as const } : {}),
         });
 
         return jsonOk(

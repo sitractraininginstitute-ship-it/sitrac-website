@@ -31,6 +31,8 @@ export interface EventData {
     registrationLink?: string;
     coverImage:       string;
     featured:         boolean;
+    attachmentUrl?:   string;
+    attachmentName?:  string;
 }
 
 export default async function EventsPage() {
@@ -61,6 +63,8 @@ export default async function EventsPage() {
             registrationLink: e.registrationLink as string | undefined,
             coverImage:       e.coverImage       as string,
             featured:         Boolean(e.featured),
+            attachmentUrl:    e.attachmentUrl    as string | undefined,
+            attachmentName:   e.attachmentName   as string | undefined,
         }));
     } catch (err) {
         console.error("EventsPage: failed to load events", err);

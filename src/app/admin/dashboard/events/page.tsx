@@ -18,7 +18,11 @@ const FIELDS = [
     { key: "registrationLink", label: "Registration Link", type: "url"      as const, placeholder: "https://..." },
     { key: "coverImage",       label: "Cover Image",       type: "image"    as const, required: true, folder: "events" },
     { key: "featured",         label: "Featured Event",    type: "checkbox" as const, placeholder: "Show as featured on events page" },
+    // PDF brochure attachment (optional)
+    { key: "attachmentUrl",    label: "Brochure / Info PDF (optional)", type: "document" as const, folder: "events" },
+    { key: "attachmentName",   label: "PDF Display Name (optional)",   type: "text"     as const, placeholder: "e.g. Event Brochure 2026.pdf" },
 ];
+
 
 export default async function AdminEventsPage() {
     await connectToDatabase();
