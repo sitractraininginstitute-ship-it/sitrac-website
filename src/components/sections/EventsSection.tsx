@@ -360,25 +360,67 @@ function CalendarView({ events }: { events: EventData[] }) {
 
 function CalendarEventRow({ event }: { event: EventData }) {
     return (
-        <div style={{
+        <div className="cal-event-row" style={{
             background: "#fff", borderRadius: "12px", padding: "1rem 1.25rem",
             boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-            display: "flex", gap: "1rem", alignItems: "flex-start",
         }}>
+            {/* Mobile-safe CSS to prevent badge/title overlap */}
+            <style>{`
+                .cal-event-row {
+                    display: flex;
+                    gap: 1rem;
+                    align-items: flex-start;
+                }
+                /* On narrow mobile: stack vertically so badge never sits on title */
+                @media (max-width: 480px) {
+                    .cal-event-row {
+                        flex-wrap: wrap;
+                    }
+                    .cal-event-row .cal-event-actions {
+                        width: 100%;
+                        flex-direction: row !important;
+                        flex-wrap: wrap;
+                    }
+                    /* Badge stacks ABOVE title inside content block */
+                    .cal-event-content {
+                        order: 1;
+                    }
+                    .cal-event-badge {
+                        order: 0;
+                        width: 100%;
+                        margin-left: 24px; /* account for color bar width + gap */
+                    }
+                    .cal-event-actions {
+                        order: 2;
+                    }
+                }
+            `}</style>
+
+            {/* Left color bar */}
             <div style={{
                 width: "4px", borderRadius: "4px", background: CATEGORY_COLORS[event.category] ?? "#6b7280",
                 alignSelf: "stretch", flexShrink: 0,
             }} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, color: "#111827", marginBottom: "0.2rem" }}>{event.title}</div>
-                <div style={{ fontSize: "0.82rem", color: "#6b7280", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+
+            {/* Badge — on desktop sits to the right; on mobile moves to its own row above title */}
+            <span className="cal-event-badge" style={{ flexShrink: 0, order: 1 }}>
+                <CategoryBadge category={event.category} />
+            </span>
+
+            {/* Content: title + meta */}
+            <div className="cal-event-content" style={{ flex: 1, minWidth: 0, order: 1 }}>
+                <div style={{ fontWeight: 700, color: "#111827", marginBottom: "0.2rem", lineHeight: 1.3 }}>
+                    {event.title}
+                </div>
+                <div style={{ fontSize: "0.82rem", color: "#6b7280", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
                     {event.time && <span><i className="ti ti-clock me-1"></i>{event.time}</span>}
                     {event.location && <span><i className="ti ti-map-pin me-1"></i>{event.location}</span>}
                     {event.price && <span><i className="ti ti-currency-dollar me-1"></i>{event.price}</span>}
                 </div>
             </div>
-            <CategoryBadge category={event.category} />
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", flexShrink: 0 }}>
+
+            {/* Action buttons */}
+            <div className="cal-event-actions" style={{ display: "flex", flexDirection: "column", gap: "0.4rem", flexShrink: 0, order: 1 }}>
                 <Link
                     href={`/events/${event.slug}`}
                     style={{
@@ -386,6 +428,7 @@ function CalendarEventRow({ event }: { event: EventData }) {
                         background: "#f3f4f6", color: "#052E26",
                         borderRadius: "8px", padding: "0.35rem 0.75rem",
                         fontSize: "0.75rem", fontWeight: 600, textDecoration: "none",
+                        whiteSpace: "nowrap",
                     }}
                 >
                     More Info <i className="ti ti-arrow-right" />
@@ -395,10 +438,11 @@ function CalendarEventRow({ event }: { event: EventData }) {
                         href={event.registrationLink}
                         target="_blank" rel="noopener noreferrer"
                         style={{
-                            display: "inline-flex", alignItems: "center",
+                            display: "inline-flex", alignItems: "center", justifyContent: "center",
                             background: "#052E26", color: "#BDE162",
                             borderRadius: "8px", padding: "0.4rem 0.9rem",
                             fontSize: "0.78rem", fontWeight: 700, textDecoration: "none",
+                            whiteSpace: "nowrap",
                         }}
                     >
                         Register
