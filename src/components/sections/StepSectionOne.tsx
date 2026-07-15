@@ -1,10 +1,41 @@
+import { unstable_noStore as noStore } from "next/cache";
+import { connectToDatabase } from "@/lib/mongodb";
+import ProcessStepModel from "@/models/ProcessStep";
+
 interface StepSectionOneProps {
-    classes? : string
+    classes?: string;
 }
 
-export default function StepSectionOne({classes}: StepSectionOneProps) {
+/** Reusable vertical arrow SVG — identical for every step */
+function ArrowDown() {
     return (
-        <section className={`step-section ${classes}`}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="140" viewBox="0 0 7 140" fill="none">
+            <path
+                d="M3.5 140L6.38675 135L0.613244 135L3.5 140ZM3.5 0L3 -2.84124e-08L3 135.5L3.5 135.5L4 135.5L4 2.84124e-08L3.5 0Z"
+                fill="#132B49" fillOpacity="0.3"/>
+        </svg>
+    );
+}
+
+export default async function StepSectionOne({ classes }: StepSectionOneProps) {
+    noStore();
+
+    let steps: { _id: string; stepNumber: string; title: string; description: string }[] = [];
+    try {
+        await connectToDatabase();
+        const docs = await ProcessStepModel.find().sort({ order: 1 }).lean();
+        steps = docs.map((s) => ({
+            _id:         (s._id as { toString(): string }).toString(),
+            stepNumber:  s.stepNumber  as string,
+            title:       s.title       as string,
+            description: s.description as string,
+        }));
+    } catch (err) {
+        console.error("StepSectionOne: failed to load process steps", err);
+    }
+
+    return (
+        <section className={`step-section ${classes ?? ""}`}>
             {/*-- Divider --*/}
             <div className="divider"></div>
 
@@ -22,96 +53,34 @@ export default function StepSectionOne({classes}: StepSectionOneProps) {
             {/*-- Divider --*/}
             <div className="divider-sm"></div>
 
-            <div className="container">
-                <div className="row g-5 g-lg-0">
-                    {/*-- Step Card --*/}
-                    <div className="col-12 col-sm-6 col-lg-3">
-                        <div className="step-card fadeInUp" data-delay="0.5">
-                            <div className="step-number">
-                                <span>Step 01</span>
-                                <div className="arrow-down">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="7" height="140" viewBox="0 0 7 140"
-                                         fill="none">
-                                        <path
-                                            d="M3.5 140L6.38675 135L0.613244 135L3.5 140ZM3.5 0L3 -2.84124e-08L3 135.5L3.5 135.5L4 135.5L4 2.84124e-08L3.5 0Z"
-                                            fill="#132B49" fillOpacity="0.3"/>
-                                    </svg>
+            {steps.length > 0 && (
+                <div className="container">
+                    <div className="row g-5 g-lg-0">
+                        {steps.map((step, index) => {
+                            const delay = (0.25 * (index + 2)).toFixed(2);
+                            return (
+                                <div key={step._id} className="col-12 col-sm-6 col-lg-3">
+                                    <div className="step-card fadeInUp" data-delay={delay}>
+                                        <div className="step-number">
+                                            <span>Step {step.stepNumber}</span>
+                                            <div className="arrow-down">
+                                                <ArrowDown />
+                                            </div>
+                                        </div>
+                                        <div className="step-body mt-4 px-3 px-xxl-4">
+                                            <h4>{step.title}</h4>
+                                            <p className="mb-0">{step.description}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="step-body mt-4 px-3 px-xxl-4">
-                                <h4>Needs Assessment</h4>
-                                <p className="mb-0">We identify institutional gaps and training needs.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Step Card --*/}
-                    <div className="col-12 col-sm-6 col-lg-3">
-                        <div className="step-card fadeInUp" data-delay="0.75">
-                            <div className="step-number">
-                                <span>Step 02</span>
-                                <div className="arrow-down">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="7" height="140" viewBox="0 0 7 140"
-                                         fill="none">
-                                        <path
-                                            d="M3.5 140L6.38675 135L0.613244 135L3.5 140ZM3.5 0L3 -2.84124e-08L3 135.5L3.5 135.5L4 135.5L4 2.84124e-08L3.5 0Z"
-                                            fill="#132B49" fillOpacity="0.3"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div className="step-body mt-4 px-3 px-xxl-4">
-                                <h4>Data Collection</h4>
-                                <p className="mb-0">We gather relevant information for accurate planning.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Step Card --*/}
-                    <div className="col-12 col-sm-6 col-lg-3">
-                        <div className="step-card fadeInUp" data-delay="1">
-                            <div className="step-number">
-                                <span>Step 03</span>
-                                <div className="arrow-down">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="7" height="140" viewBox="0 0 7 140"
-                                         fill="none">
-                                        <path
-                                            d="M3.5 140L6.38675 135L0.613244 135L3.5 140ZM3.5 0L3 -2.84124e-08L3 135.5L3.5 135.5L4 135.5L4 2.84124e-08L3.5 0Z"
-                                            fill="#132B49" fillOpacity="0.3"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div className="step-body mt-4 px-3 px-xxl-4">
-                                <h4>Analysis & Review</h4>
-                                <p className="mb-0">We assess performance gaps and improvement areas.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Step Card --*/}
-                    <div className="col-12 col-sm-6 col-lg-3">
-                        <div className="step-card fadeInUp" data-delay="1.25">
-                            <div className="step-number">
-                                <span>Step 04</span>
-                                <div className="arrow-down">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="7" height="140" viewBox="0 0 7 140"
-                                         fill="none">
-                                        <path
-                                            d="M3.5 140L6.38675 135L0.613244 135L3.5 140ZM3.5 0L3 -2.84124e-08L3 135.5L3.5 135.5L4 135.5L4 2.84124e-08L3.5 0Z"
-                                            fill="#132B49" fillOpacity="0.3"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div className="step-body mt-4 px-3 px-xxl-4">
-                                <h4>Implementation</h4>
-                                <p className="mb-0">We deliver tailored training and capacity solutions.</p>
-                            </div>
-                        </div>
+                            );
+                        })}
                     </div>
                 </div>
-            </div>
+            )}
 
             {/*-- Divider --*/}
             <div className="divider"></div>
         </section>
-    )
+    );
 }

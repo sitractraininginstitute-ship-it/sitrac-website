@@ -1,8 +1,29 @@
+import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import shapeImg from "@/assets/img/core-img/shape.png";
-import TestimonialSliderFour from "@/components/sliders/TestimonialSliderFour";
+import { connectToDatabase } from "@/lib/mongodb";
+import TestimonialModel from "@/models/Testimonial";
+import TestimonialSliderFour, { TestimonialData } from "@/components/sliders/TestimonialSliderFour";
 
-export default function TestimonialSectionOne() {
+export default async function TestimonialSectionOne() {
+    noStore();
+
+    let testimonials: TestimonialData[] = [];
+    try {
+        await connectToDatabase();
+        const docs = await TestimonialModel.find().sort({ order: 1 }).lean();
+        testimonials = docs.map((t) => ({
+            _id:          (t._id as { toString(): string }).toString(),
+            name:         t.name  as string,
+            role:         t.role  as string | undefined,
+            organization: t.organization as string | undefined,
+            quote:        t.quote as string,
+            photo:        t.photo as string | undefined,
+        }));
+    } catch (err) {
+        console.error("TestimonialSectionOne: failed to load testimonials", err);
+    }
+
     return (
         <section className="testimonial-section bg-secondary">
             {/*-- Divider --*/}
@@ -45,11 +66,11 @@ export default function TestimonialSectionOne() {
                         </div>
                     </div>
 
-                    <TestimonialSliderFour/>
+                    <TestimonialSliderFour testimonials={testimonials} />
                 </div>
             </div>
 
             <div className="divider"></div>
         </section>
-    )
+    );
 }

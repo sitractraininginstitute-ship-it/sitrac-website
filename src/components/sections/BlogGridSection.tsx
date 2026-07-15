@@ -1,270 +1,121 @@
-import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
-import bgImg21 from "@/assets/img/bg-img/21.jpg";
-import bgImg22 from "@/assets/img/bg-img/22.jpg";
-import bgImg23 from "@/assets/img/bg-img/23.jpg";
-import bgImg64 from "@/assets/img/bg-img/64.jpg";
-import bgImg65 from "@/assets/img/bg-img/65.jpg";
-import bgImg66 from "@/assets/img/bg-img/66.jpg";
-import bgImg67 from "@/assets/img/bg-img/67.jpg";
-import bgImg68 from "@/assets/img/bg-img/68.jpg";
-import bgImg69 from "@/assets/img/bg-img/69.jpg";
+import Link from "next/link";
+import { connectToDatabase } from "@/lib/mongodb";
+import BlogPostModel from "@/models/BlogPost";
 
-export default function BlogGridSection() {
+interface BlogPost {
+    _id:         string;
+    title:       string;
+    slug:        string;
+    coverImage:  string;
+    category?:   string;
+    publishedAt?: string;
+}
+
+function formatDate(dateStr?: string): string {
+    if (!dateStr) return "";
+    try {
+        return new Date(dateStr).toLocaleDateString("en-GB", {
+            day: "numeric", month: "long", year: "numeric",
+        });
+    } catch { return dateStr; }
+}
+
+export default async function BlogGridSection() {
+    noStore();
+
+    let posts: BlogPost[] = [];
+    try {
+        await connectToDatabase();
+        const docs = await BlogPostModel.find().sort({ publishedAt: -1 }).lean();
+        posts = docs.map((p) => ({
+            _id:         (p._id as { toString(): string }).toString(),
+            title:       p.title      as string,
+            slug:        p.slug       as string,
+            coverImage:  p.coverImage as string,
+            category:    p.category   as string | undefined,
+            publishedAt: p.publishedAt ? String(p.publishedAt) : undefined,
+        }));
+    } catch (err) {
+        console.error("BlogGridSection: failed to load blog posts", err);
+    }
+
+    const DELAYS = ["0.5", "0.75", "1", "0.5", "0.75", "1", "0.5", "0.75", "1"];
+
     return (
         <div className="blog-section bg-white">
             {/*-- Divider --*/}
             <div className="divider"></div>
 
             <div className="container">
-                <div className="row g-4 justify-content-center">
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="0.5">
-                            <div className="blog-img">
-                                <Image src={bgImg21} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
+                {posts.length > 0 ? (
+                    <div className="row g-4 justify-content-center">
+                        {posts.map((post, index) => (
+                            <div key={post._id} className="col-12 col-md-6 col-lg-4 translateY8">
+                                <div className="blog-card fadeInUp" data-delay={DELAYS[index % DELAYS.length]}>
+                                    {/*-- Blog image with fixed-height container --*/}
+                                    <div
+                                        className="blog-img"
+                                        style={{
+                                            position: "relative",
+                                            height:   "220px",
+                                            overflow: "hidden",
+                                        }}
+                                    >
+                                        <Image
+                                            src={post.coverImage}
+                                            alt={post.title}
+                                            fill
+                                            style={{ objectFit: "cover" }}
+                                        />
+                                    </div>
+
+                                    <div className="blog-body">
+                                        <div className="blog-meta mb-2">
+                                            {post.category && (
+                                                <span className="post-category">{post.category}</span>
+                                            )}
+                                            {post.category && post.publishedAt && (
+                                                <span className="dot"></span>
+                                            )}
+                                            {post.publishedAt && (
+                                                <span className="post-date">{formatDate(post.publishedAt)}</span>
+                                            )}
+                                        </div>
+
+                                        <Link href={`/blog/${post.slug}`} className="post-title">
+                                            {post.title}
+                                        </Link>
+
+                                        {/*-- Button --*/}
+                                        <div className="d-block mt-4">
+                                            <Link href={`/blog/${post.slug}`} className="btn-view-more">
+                                                <span><i className="ti ti-plus"></i></span>
+                                                <span><i className="ti ti-plus"></i> View Details</span>
+                                            </Link>
+                                        </div>
+                                    </div>
                                 </div>
-                                <Link href="/blog/details" className="post-title">How You Can Find A Design Job You
-                                    Will
-                                    Truly</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="0.75">
-                            <div className="blog-img">
-                                <Image src={bgImg22} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">The Missing Advice I Needed When
-                                    Starting My
-                                    Career</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
+                ) : (
+                    <div className="text-center py-5">
+                        <h4>No blog posts yet</h4>
+                        <p className="text-muted mb-4">
+                            Check back soon for insights and expert perspectives from the SITRAC team.
+                        </p>
+                        <Link href="/contact" className="btn btn-primary">
+                            <span>Contact Us</span>
+                            <span>Contact Us</span>
+                        </Link>
                     </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="1">
-                            <div className="blog-img">
-                                <Image src={bgImg23} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">How to Craft The Perfect Web Design
-                                    and
-                                    Developer</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="0.5">
-                            <div className="blog-img">
-                                <Image src={bgImg64} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">Essential for Effective Market
-                                    Research &
-                                    Analysis</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="0.75">
-                            <div className="blog-img">
-                                <Image src={bgImg65} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">Digital Transformation Services Can
-                                    Revolutionize</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="1">
-                            <div className="blog-img">
-                                <Image src={bgImg66} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">The Ultimate Guide to Financial
-                                    Advisory and
-                                    Planning</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="0.5">
-                            <div className="blog-img">
-                                <Image src={bgImg67} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">Importance of Management in Achieving
-                                    Organizational</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="0.75">
-                            <div className="blog-img">
-                                <Image src={bgImg68} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">Enhance Customer Experience and Boost
-                                    Loyalty</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/*-- Blog Card --*/}
-                    <div className="col-12 col-md-6 col-lg-4 translateY8">
-                        <div className="blog-card fadeInUp" data-delay="1">
-                            <div className="blog-img">
-                                <Image src={bgImg69} alt="" className="h-auto"/>
-                            </div>
-                            <div className="blog-body">
-                                <div className="blog-meta mb-2">
-                                    <a href="#" className="post-category">Knowledge</a>
-                                    <span className="dot"></span>
-                                    <a className="post-date" href="#">26 June 2025</a>
-                                </div>
-                                <Link href="/blog/details" className="post-title">How to Craft The Perfect Web Design
-                                    and
-                                    Developer</Link>
-                                {/*-- Button --*/}
-                                <div className="d-block mt-4">
-                                    <Link href="/blog/details" className="btn-view-more">
-                                        <span><i className="ti ti-plus"></i></span>
-                                        <span><i className="ti ti-plus"></i> View Details</span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="divider-sm"></div>
-
-            {/*-- Pagination --*/}
-            <div className="container">
-                <ul className="bizora-pagination fadeInUp list-unstyled">
-                    <li className="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#"><i className="ti ti-chevron-right"></i></a></li>
-                </ul>
+                )}
             </div>
 
             {/*-- Divider --*/}
             <div className="divider"></div>
         </div>
-    )
+    );
 }

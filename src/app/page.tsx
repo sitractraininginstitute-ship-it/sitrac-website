@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HeroSectionThree from "@/components/sections/HeroSectionThree";
 import FeaturesSectionThree from "@/components/sections/FeaturesSectionThree";
 import ServiceSectionThree from "@/components/sections/ServiceSectionThree";
@@ -9,6 +10,20 @@ import TestimonialSectionOne from "@/components/sections/TestimonialSectionOne";
 import FaqSectionTwo from "@/components/sections/FaqSectionTwo";
 import BlogSectionTwo from "@/components/sections/BlogSectionTwo";
 import CtaSectionOne from "@/components/sections/CtaSectionOne";
+
+export const metadata: Metadata = {
+    title: {
+        absolute: "Skills Innovis Training and Capacity Building Institute (SITRAC)",
+    },
+    description:
+        "SITRAC is a Pan-African capacity building institution offering specialized training, consultancy, and applied research to strengthen governance, institutional performance, and human capital across Africa.",
+    openGraph: {
+        title: "Skills Innovis Training and Capacity Building Institute (SITRAC)",
+        description:
+            "Pan-African capacity building through specialized training, consultancy, and applied research.",
+        url: "https://www.sitractraininginstitute.co.ke",
+    },
+};
 
 export default function HomeThree() {
     return (

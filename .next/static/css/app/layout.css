@@ -13181,6 +13181,14 @@ textarea:invalid {
   transform: translateY(-8px);
 }
 
+.event-card-hover {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.event-card-hover:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13) !important;
+  transform: translateY(-3px);
+}
+
 .img-rotate360 {
   animation: rotate360 8s linear infinite;
 }

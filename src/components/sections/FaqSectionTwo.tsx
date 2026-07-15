@@ -1,8 +1,26 @@
+import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import questionMark from "@/assets/img/core-img/question-mark.png";
 import Link from "next/link";
+import { connectToDatabase } from "@/lib/mongodb";
+import FAQModel from "@/models/FAQ";
 
-export default function FaqSectionTwo() {
+export default async function FaqSectionTwo() {
+    noStore();
+
+    let faqs: { _id: string; question: string; answer: string }[] = [];
+    try {
+        await connectToDatabase();
+        const docs = await FAQModel.find().sort({ order: 1 }).limit(5).lean();
+        faqs = docs.map((f) => ({
+            _id:      (f._id as { toString(): string }).toString(),
+            question: f.question as string,
+            answer:   f.answer   as string,
+        }));
+    } catch (err) {
+        console.error("FaqSectionTwo: failed to load FAQs", err);
+    }
+
     return (
         <section className="faq-section">
             {/*-- Divider --*/}
@@ -30,96 +48,54 @@ export default function FaqSectionTwo() {
                     <div className="col-12 col-md-6">
                         {/*-- FAQ Accordion --*/}
                         <div className="faq-accordion">
-                            <div className="accordion" id="faqAccordion">
-                                {/*-- Accordion Item --*/}
-                                <div className="accordion-item">
-                                    <div className="accordion-header">
-                                        <button className="accordion-button" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#faqQuestion1" aria-expanded="true"
-                                                aria-controls="faqQuestion1">
-                                            What services do you offer?
-                                        </button>
-                                    </div>
-                                    <div id="faqQuestion1" className="accordion-collapse collapse show"
-                                         data-bs-parent="#faqAccordion">
-                                        <div className="accordion-body">
-                                        We provide capacity building, institutional development, and strategic support services designed to strengthen organizations and improve performance.
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/*-- Accordion Item --*/}
-                                <div className="accordion-item">
-                                    <div className="accordion-header">
-                                        <button className="accordion-button collapsed" type="button"
+                            <div className="accordion" id="faqAccordionHome">
+                                {faqs.length > 0 ? faqs.map((faq, index) => (
+                                    <div key={faq._id} className="accordion-item">
+                                        <div className="accordion-header">
+                                            <button
+                                                className={`accordion-button${index === 0 ? "" : " collapsed"}`}
+                                                type="button"
                                                 data-bs-toggle="collapse"
-                                                data-bs-target="#faqQuestion2" aria-expanded="false"
-                                                aria-controls="faqQuestion2">
-                                            Who can use your services?
-                                        </button>
-                                    </div>
-                                    <div id="faqQuestion2" className="accordion-collapse collapse"
-                                         data-bs-parent="#faqAccordion">
-                                        <div className="accordion-body">
-                                        Our services are available to NGOs, government institutions, private organizations, and community-based groups.
+                                                data-bs-target={`#homeFaq${index}`}
+                                                aria-expanded={index === 0 ? "true" : "false"}
+                                                aria-controls={`homeFaq${index}`}
+                                            >
+                                                {faq.question}
+                                            </button>
+                                        </div>
+                                        <div
+                                            id={`homeFaq${index}`}
+                                            className={`accordion-collapse collapse${index === 0 ? " show" : ""}`}
+                                            data-bs-parent="#faqAccordionHome"
+                                        >
+                                            <div className="accordion-body">{faq.answer}</div>
                                         </div>
                                     </div>
-                                </div>
-
-                                {/*-- Accordion Item --*/}
-                                <div className="accordion-item">
-                                    <div className="accordion-header">
-                                        <button className="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#faqQuestion3" aria-expanded="false"
-                                                aria-controls="faqQuestion3">
-                                            How do you start working with clients?
-                                        </button>
-                                    </div>
-                                    <div id="faqQuestion3" className="accordion-collapse collapse"
-                                         data-bs-parent="#faqAccordion">
-                                        <div className="accordion-body">
-                                        We begin with an initial consultation to understand your needs, after which we design a tailored solution for your organization.
+                                )) : (
+                                    /* Fallback static FAQs if DB is empty */
+                                    <>
+                                        <div className="accordion-item">
+                                            <div className="accordion-header">
+                                                <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#homeFaqFallback1" aria-expanded="true" aria-controls="homeFaqFallback1">
+                                                    What services do you offer?
+                                                </button>
+                                            </div>
+                                            <div id="homeFaqFallback1" className="accordion-collapse collapse show" data-bs-parent="#faqAccordionHome">
+                                                <div className="accordion-body">We provide capacity building, institutional development, and strategic support services.</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                {/*-- Accordion Item --*/}
-                                <div className="accordion-item">
-                                    <div className="accordion-header">
-                                        <button className="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#faqQuestion4" aria-expanded="false"
-                                                aria-controls="faqQuestion4">
-                                            How long does a project take?
-                                        </button>
-                                    </div>
-                                    <div id="faqQuestion4" className="accordion-collapse collapse"
-                                         data-bs-parent="#faqAccordion">
-                                        <div className="accordion-body">
-                                        Project duration depends on scope and complexity, but most engagements range from a few weeks to several months.
+                                        <div className="accordion-item">
+                                            <div className="accordion-header">
+                                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#homeFaqFallback2" aria-expanded="false" aria-controls="homeFaqFallback2">
+                                                    Who can use your services?
+                                                </button>
+                                            </div>
+                                            <div id="homeFaqFallback2" className="accordion-collapse collapse" data-bs-parent="#faqAccordionHome">
+                                                <div className="accordion-body">Our services are available to NGOs, government institutions, private organizations, and community-based groups.</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                {/*-- Accordion Item --*/}
-                                <div className="accordion-item">
-                                    <div className="accordion-header">
-                                        <button className="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#faqQuestion5" aria-expanded="false"
-                                                aria-controls="faqQuestion5">
-                                            Do you offer customized solutions?
-                                        </button>
-                                    </div>
-                                    <div id="faqQuestion5" className="accordion-collapse collapse"
-                                         data-bs-parent="#faqAccordion">
-                                        <div className="accordion-body">
-                                        Yes. All our services are tailored to meet the specific needs and goals of each client.
-                                        </div>
-                                    </div>
-                                </div>
-
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -129,5 +105,5 @@ export default function FaqSectionTwo() {
             {/*-- Divider --*/}
             <div className="divider"></div>
         </section>
-    )
+    );
 }

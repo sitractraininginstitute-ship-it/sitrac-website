@@ -1,6 +1,25 @@
-import TeamSliderOne from "@/components/sliders/TeamSliderOne";
+import { unstable_noStore as noStore } from "next/cache";
+import { connectToDatabase } from "@/lib/mongodb";
+import TeamMemberModel from "@/models/TeamMember";
+import TeamSliderOne, { TeamMemberData } from "@/components/sliders/TeamSliderOne";
 
-export default function TeamSectionOne() {
+export default async function TeamSectionOne() {
+    noStore();
+
+    let teamMembers: TeamMemberData[] = [];
+    try {
+        await connectToDatabase();
+        const docs = await TeamMemberModel.find().sort({ order: 1 }).lean();
+        teamMembers = docs.map((m) => ({
+            _id:   (m._id as { toString(): string }).toString(),
+            name:  m.name  as string,
+            role:  m.role  as string,
+            photo: m.photo as string,
+        }));
+    } catch (err) {
+        console.error("TeamSectionOne: failed to load team members", err);
+    }
+
     return (
         <section className="team-section bg-dark team-one-bg">
             {/*-- Divider --*/}
@@ -20,10 +39,10 @@ export default function TeamSectionOne() {
             {/*-- Divider --*/}
             <div className="divider-sm"></div>
 
-            <TeamSliderOne/>
+            <TeamSliderOne teamMembers={teamMembers} />
 
             {/*-- Divider --*/}
             <div className="divider"></div>
         </section>
-    )
+    );
 }

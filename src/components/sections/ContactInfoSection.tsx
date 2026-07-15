@@ -1,4 +1,63 @@
+"use client";
+
+import { useState, FormEvent } from "react";
+
+type Status = "idle" | "submitting" | "success" | "error";
+
 export default function ContactInfoSection() {
+    const [name,    setName]    = useState("");
+    const [email,   setEmail]   = useState("");
+    const [service, setService] = useState("");
+    const [message, setMessage] = useState("");
+
+    const [status,       setStatus]       = useState<Status>("idle");
+    const [errorMessage, setErrorMessage] = useState("");
+
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        // ── Client-side validation ───────────────────────────────────────────
+        if (!name.trim() || !email.trim() || !message.trim()) {
+            setStatus("error");
+            setErrorMessage("Please fill in your name, email, and message.");
+            return;
+        }
+
+        setStatus("submitting");
+        setErrorMessage("");
+
+        try {
+            const res = await fetch("/api/contact", {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify({
+                    name:    name.trim(),
+                    email:   email.trim(),
+                    service: service.trim() || undefined,
+                    message: message.trim(),
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Clear fields and show success
+                setName("");
+                setEmail("");
+                setService("");
+                setMessage("");
+                setStatus("success");
+            } else {
+                // Show API-returned validation message
+                setStatus("error");
+                setErrorMessage(data?.error ?? "Something went wrong. Please try again.");
+            }
+        } catch {
+            setStatus("error");
+            setErrorMessage("Network error — please check your connection and try again.");
+        }
+    }
+
     return (
         <section className="contact-info-section">
             {/*-- Divider --*/}
@@ -119,32 +178,94 @@ export default function ContactInfoSection() {
                         <h4 className="text-white">Make an Appointment</h4>
                         <p className="mb-4 text-white">Feel free to contact with us</p>
 
-                        <form action="#" className="contact-form">
-                            <div className="row g-3">
-                                <div className="col-12">
-                                    <input type="text" id="name" name="name" className="form-control"
-                                           placeholder="First Name *"/>
-                                </div>
-                                <div className="col-12">
-                                    <input type="email" id="email" name="email" className="form-control"
-                                           placeholder="Email Here *"/>
-                                </div>
-                                <div className="col-12">
-                                    <input type="text" id="service" name="service" className="form-control"
-                                           placeholder="Select Service *"/>
-                                </div>
-                                <div className="col-12">
-                        <textarea name="message" id="message" className="form-control"
-                                  placeholder="Your Message*"></textarea>
-                                </div>
-                                <div className="col-12">
-                                    <button type="submit" className="btn btn-primary">
-                                        <span>Send Message</span>
-                                        <span>Send Message</span>
-                                    </button>
+                        {/* ── Success state ── */}
+                        {status === "success" ? (
+                            <div className="alert alert-success d-flex align-items-center gap-2" role="alert">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                     className="bi bi-check-circle-fill flex-shrink-0" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                </svg>
+                                <div>
+                                    <strong>Message sent!</strong> Thanks — we&apos;ll be in touch soon.
                                 </div>
                             </div>
-                        </form>
+                        ) : (
+                            <form onSubmit={handleSubmit} noValidate className="contact-form">
+                                <div className="row g-3">
+                                    {/* ── Inline error alert ── */}
+                                    {status === "error" && errorMessage && (
+                                        <div className="col-12">
+                                            <div className="alert alert-danger alert-dismissible mb-0" role="alert">
+                                                {errorMessage}
+                                                <button
+                                                    type="button"
+                                                    className="btn-close"
+                                                    aria-label="Close"
+                                                    onClick={() => { setStatus("idle"); setErrorMessage(""); }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="col-12">
+                                        <input
+                                            type="text"
+                                            id="contact-name"
+                                            name="name"
+                                            className="form-control"
+                                            placeholder="First Name *"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-12">
+                                        <input
+                                            type="email"
+                                            id="contact-email"
+                                            name="email"
+                                            className="form-control"
+                                            placeholder="Email Here *"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-12">
+                                        <input
+                                            type="text"
+                                            id="contact-service"
+                                            name="service"
+                                            className="form-control"
+                                            placeholder="Service (optional)"
+                                            value={service}
+                                            onChange={(e) => setService(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="col-12">
+                                        <textarea
+                                            id="contact-message"
+                                            name="message"
+                                            className="form-control"
+                                            placeholder="Your Message *"
+                                            value={message}
+                                            onChange={(e) => setMessage(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-12">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary"
+                                            disabled={status === "submitting"}
+                                        >
+                                            <span>{status === "submitting" ? "Sending…" : "Send Message"}</span>
+                                            <span>{status === "submitting" ? "Sending…" : "Send Message"}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        )}
                     </div>
                 </div>
             </div>

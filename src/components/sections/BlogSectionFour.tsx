@@ -1,15 +1,65 @@
+import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
-import bgImg74 from "@/assets/img/bg-img/74.jpg";
-import bgImg75 from "@/assets/img/bg-img/75.jpg";
-import bgImg76 from "@/assets/img/bg-img/76.jpg";
-import bgImg77 from "@/assets/img/bg-img/77.jpg";
-import bgImg70 from "@/assets/img/bg-img/70.jpg";
-import bgImg71 from "@/assets/img/bg-img/71.jpg";
-import bgImg72 from "@/assets/img/bg-img/72.jpg";
-import bgImg73 from "@/assets/img/bg-img/73.jpg";
+import { connectToDatabase } from "@/lib/mongodb";
+import BlogPostModel from "@/models/BlogPost";
 
-export default function BlogSectionFour() {
+interface BlogPost {
+    _id:         string;
+    title:       string;
+    slug:        string;
+    excerpt:     string;
+    coverImage:  string;
+    category?:   string;
+    author?:     string;
+    publishedAt?: string;
+}
+
+function formatDate(dateStr?: string): string {
+    if (!dateStr) return "";
+    try {
+        return new Date(dateStr).toLocaleDateString("en-GB", {
+            day: "numeric", month: "long", year: "numeric",
+        });
+    } catch { return dateStr; }
+}
+
+export default async function BlogSectionFour() {
+    noStore();
+
+    let posts: BlogPost[] = [];
+    let recentPosts: BlogPost[] = [];
+    let categories: string[] = [];
+
+    try {
+        await connectToDatabase();
+        const [allDocs, recentDocs] = await Promise.all([
+            BlogPostModel.find().sort({ publishedAt: -1 }).lean(),
+            BlogPostModel.find().sort({ publishedAt: -1 }).limit(4).lean(),
+        ]);
+
+        const mapPost = (p: Record<string, unknown>): BlogPost => ({
+            _id:         (p._id as { toString(): string }).toString(),
+            title:       p.title       as string,
+            slug:        p.slug        as string,
+            excerpt:     p.excerpt     as string,
+            coverImage:  p.coverImage  as string,
+            category:    p.category    as string | undefined,
+            author:      p.author      as string | undefined,
+            publishedAt: p.publishedAt ? String(p.publishedAt) : undefined,
+        });
+
+        posts       = allDocs.map(mapPost);
+        recentPosts = recentDocs.map(mapPost);
+
+        // Unique categories
+        const catSet = new Set<string>();
+        allDocs.forEach((p) => { if (p.category) catSet.add(p.category as string); });
+        categories = Array.from(catSet);
+    } catch (err) {
+        console.error("BlogSectionFour: failed to load blog posts", err);
+    }
+
     return (
         <div className="blog-section">
             {/*-- Divider --*/}
@@ -20,104 +70,43 @@ export default function BlogSectionFour() {
                     <div className="col-12 col-md-7 col-lg-8">
                         {/*-- Blog Standard --*/}
                         <div className="d-flex flex-column gap-5 pe-lg-3">
-                            {/*-- Blog Card --*/}
-                            <div className="blog-card style-two fadeInUp" data-delay="0.5">
-                                <div className="blog-img">
-                                    <Image src={bgImg74} alt="" className="h-auto"/>
-                                </div>
-                                <div className="blog-body">
-                                    <div className="blog-meta mb-2">
-                                        <a href="#" className="post-category">Knowledge</a>
-                                        <span className="dot"></span>
-                                        <a className="post-date" href="#">27 May, 2025</a>
+                            {posts.length > 0 ? posts.map((post, index) => (
+                                <div key={post._id} className="blog-card style-two fadeInUp" data-delay={`${0.3 + index * 0.2}`}>
+                                    <div className="blog-img" style={{ position: "relative", height: "280px", overflow: "hidden" }}>
+                                        <Image
+                                            src={post.coverImage}
+                                            alt={post.title}
+                                            fill
+                                            style={{ objectFit: "cover" }}
+                                        />
                                     </div>
-                                    <Link href="/blog/details" className="post-title">How You Can Find A Design Job You
-                                        Will Truly</Link>
-                                    <div className="mt-5">
-                                        <Link href="/blog/details" className="btn btn-primary">
-                                            <span>View Details</span>
-                                            <span>View Details</span>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/*-- Blog Card --*/}
-                            <div className="blog-card style-two fadeInUp" data-delay="0.5">
-                                <div className="blog-img">
-                                    <Image src={bgImg75} alt="" className="h-auto"/>
-                                </div>
-                                <div className="blog-body">
-                                    <div className="blog-meta mb-2">
-                                        <a href="#" className="post-category">Knowledge</a>
-                                        <span className="dot"></span>
-                                        <a className="post-date" href="#">27 May, 2025</a>
-                                    </div>
-                                    <Link href="/blog/details" className="post-title">The Missing Advice I Needed When
-                                        Starting My
-                                        Career</Link>
-                                    <div className="mt-5">
-                                        <Link href="/blog/details" className="btn btn-primary">
-                                            <span>View Details</span>
-                                            <span>View Details</span>
-                                        </Link>
+                                    <div className="blog-body">
+                                        <div className="blog-meta mb-2">
+                                            {post.category && (
+                                                <span className="post-category">{post.category}</span>
+                                            )}
+                                            {post.publishedAt && (
+                                                <>
+                                                    <span className="dot"></span>
+                                                    <span className="post-date">{formatDate(post.publishedAt)}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                        <Link href={`/blog/${post.slug}`} className="post-title">{post.title}</Link>
+                                        <div className="mt-5">
+                                            <Link href={`/blog/${post.slug}`} className="btn btn-primary">
+                                                <span>View Details</span>
+                                                <span>View Details</span>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/*-- Blog Card --*/}
-                            <div className="blog-card style-two fadeInUp" data-delay="0.5">
-                                <div className="blog-img">
-                                    <Image src={bgImg76} alt="" className="h-auto"/>
+                            )) : (
+                                <div className="text-center py-5">
+                                    <h4>No blog posts yet</h4>
+                                    <p className="text-muted">Check back soon for insights and expert perspectives from the SITRAC team.</p>
                                 </div>
-                                <div className="blog-body">
-                                    <div className="blog-meta mb-2">
-                                        <a href="#" className="post-category">Knowledge</a>
-                                        <span className="dot"></span>
-                                        <a className="post-date" href="#">27 May, 2025</a>
-                                    </div>
-                                    <Link href="/blog/details" className="post-title">How to Craft The Perfect Web
-                                        Design and
-                                        Developer</Link>
-                                    <div className="mt-5">
-                                        <Link href="/blog/details" className="btn btn-primary">
-                                            <span>View Details</span>
-                                            <span>View Details</span>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/*-- Blog Card --*/}
-                            <div className="blog-card style-two fadeInUp" data-delay="0.5">
-                                <div className="blog-img">
-                                    <Image src={bgImg77} alt="" className="h-auto"/>
-                                </div>
-                                <div className="blog-body">
-                                    <div className="blog-meta mb-2">
-                                        <a href="#" className="post-category">Knowledge</a>
-                                        <span className="dot"></span>
-                                        <a className="post-date" href="#">27 May, 2025</a>
-                                    </div>
-                                    <Link href="/blog/details" className="post-title">Essential for Effective Market
-                                        Research &
-                                        Analysis</Link>
-                                    <div className="mt-5">
-                                        <Link href="/blog/details" className="btn btn-primary">
-                                            <span>View Details</span>
-                                            <span>View Details</span>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/*-- Pagination --*/}
-                            <ul className="bizora-pagination justify-content-start list-unstyled">
-                                <li className="active"><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#"><i className="ti ti-chevron-right"></i></a></li>
-                            </ul>
+                            )}
                         </div>
                     </div>
 
@@ -126,134 +115,56 @@ export default function BlogSectionFour() {
                             {/*-- Widget --*/}
                             <div className="widget-card">
                                 <h4 className="h4 widget-title">Search Here</h4>
-
-                                {/*-- Form --*/}
-                                <form action="#" method="get">
-                                    <input type="search" placeholder="Search..." className="form-control"/>
+                                <form action="/blog" method="get">
+                                    <input type="search" name="q" placeholder="Search..." className="form-control"/>
                                     <button type="submit">
                                         <i className="ti ti-search"></i>
                                     </button>
                                 </form>
                             </div>
 
-                            {/*-- Widget --*/}
-                            <div className="widget-card">
-                                <h4 className="h4 widget-title">Categories</h4>
+                            {/*-- Categories --*/}
+                            {categories.length > 0 && (
+                                <div className="widget-card">
+                                    <h4 className="h4 widget-title">Categories</h4>
+                                    <ul className="blog-list">
+                                        {categories.map((cat) => (
+                                            <li key={cat}>
+                                                <Link href="/blog">{cat}</Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
 
-                                <ul className="blog-list">
-                                    <li>
-                                        <Link href="/blog-grid">
-                                            Business
-                                            <span>(2)</span>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/blog-grid">
-                                            Uncategorized
-                                            <span>(18)</span>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/blog-grid">
-                                            Consulting
-                                            <span>(4)</span>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/blog-grid">
-                                            Cyber Security
-                                            <span>(8)</span>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/blog-grid">
-                                            Technology
-                                            <span>(11)</span>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/blog-grid">
-                                            Marketing
-                                            <span>(5)</span>
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            {/*-- Widget --*/}
-                            <div className="widget-card">
-                                <h4 className="h4 widget-title">Recent Posts</h4>
-
-                                <div className="d-flex flex-column gap-4">
-                                    {/*-- Widget Post --*/}
-                                    <div className="widget-blog">
-                                        <div className="blog-thumbnail">
-                                            <Image src={bgImg70} alt="" className="h-auto"/>
-                                        </div>
-                                        <div className="blog-content">
-                                            <Link href="/blog/details" className="post-title mb-2">How You Can Find A
-                                                Design Job
-                                                You Will Truly</Link>
-                                            <a href="#" className="post-date">July 9 2025</a>
-                                        </div>
-                                    </div>
-
-                                    {/*-- Widget Post --*/}
-                                    <div className="widget-blog">
-                                        <div className="blog-thumbnail">
-                                            <Image src={bgImg71} alt="" className="h-auto"/>
-                                        </div>
-                                        <div className="blog-content">
-                                            <Link href="/blog/details" className="post-title mb-2">The Missing Advice I
-                                                Needed When
-                                                Starting My Career</Link>
-                                            <a href="#" className="post-date">July 9 2025</a>
-                                        </div>
-                                    </div>
-
-                                    {/*-- Widget Post --*/}
-                                    <div className="widget-blog">
-                                        <div className="blog-thumbnail">
-                                            <Image src={bgImg72} alt="" className="h-auto"/>
-                                        </div>
-                                        <div className="blog-content">
-                                            <Link href="/blog/details" className="post-title mb-2">How to Craft The
-                                                Perfect Web
-                                                Design and Developer</Link>
-                                            <a href="#" className="post-date">July 9 2025</a>
-                                        </div>
-                                    </div>
-
-                                    {/*-- Widget Post --*/}
-                                    <div className="widget-blog">
-                                        <div className="blog-thumbnail">
-                                            <Image src={bgImg73} alt="" className="h-auto"/>
-                                        </div>
-                                        <div className="blog-content">
-                                            <Link href="/blog/details" className="post-title mb-2">Essential for
-                                                Effective Market
-                                                Research & Analysis</Link>
-                                            <a href="#" className="post-date">July 9 2025</a>
-                                        </div>
+                            {/*-- Recent Posts --*/}
+                            {recentPosts.length > 0 && (
+                                <div className="widget-card">
+                                    <h4 className="h4 widget-title">Recent Posts</h4>
+                                    <div className="d-flex flex-column gap-4">
+                                        {recentPosts.map((post) => (
+                                            <div key={post._id} className="widget-blog">
+                                                <div className="blog-thumbnail" style={{ position: "relative", width: "80px", height: "70px", overflow: "hidden", flexShrink: 0 }}>
+                                                    <Image
+                                                        src={post.coverImage}
+                                                        alt={post.title}
+                                                        fill
+                                                        style={{ objectFit: "cover", borderRadius: "6px" }}
+                                                    />
+                                                </div>
+                                                <div className="blog-content">
+                                                    <Link href={`/blog/${post.slug}`} className="post-title mb-2">
+                                                        {post.title}
+                                                    </Link>
+                                                    {post.publishedAt && (
+                                                        <span className="post-date">{formatDate(post.publishedAt)}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            </div>
-
-                            {/*-- Widget --*/}
-                            <div className="widget-card">
-                                <h4 className="h4 widget-title">Tags</h4>
-
-                                {/*-- Tag List --*/}
-                                <ul className="tag-list list-unstyled">
-                                    <li><a href="#">All Project</a></li>
-                                    <li><a href="#">Interior</a></li>
-                                    <li><a href="#">Planting</a></li>
-                                    <li><a href="#">Daily Inspiration</a></li>
-                                    <li><a href="#">Mobile</a></li>
-                                    <li><a href="#">Trend</a></li>
-                                    <li><a href="#">Design</a></li>
-                                </ul>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -262,5 +173,5 @@ export default function BlogSectionFour() {
             {/*-- Divider --*/}
             <div className="divider"></div>
         </div>
-    )
+    );
 }

@@ -2,26 +2,23 @@
 
 import Image from "next/image";
 import { Pagination, Autoplay } from "swiper/modules";
-import {Swiper, SwiperSlide} from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
-import imgBg13 from "@/assets/img/bg-img/13.jpg";
-import imgBg14 from "@/assets/img/bg-img/14.jpg";
-import imgBg15 from "@/assets/img/bg-img/15.jpg";
-import imgBg16 from "@/assets/img/bg-img/16.jpg";
 
-export default function TeamSliderOne() {
+export interface TeamMemberData {
+    _id: string;
+    name: string;
+    role: string;
+    photo: string;
+}
 
-    const teamMembers = [
-        { img: imgBg13, name: "Hon. Wendy Komen", role: "Director of Training" },
-        { img: imgBg14, name: "Dr. Wesley Keitany", role: "Senior Consultant" },
-        { img: imgBg15, name: "Prof. Buziba Charles", role: "Lead Senior Consultant & Trainer" },
-        { img: imgBg16, name: "Ms. Catherine Weru", role: "Senior Consultant" },
-        { img: imgBg13, name: "Hon. Wendy Komen", role: "Director of Training" },
-        { img: imgBg14, name: "Dr. Wesley Keitany", role: "Senior Consultant" },
-        { img: imgBg15, name: "Prof. Buziba Charles", role: "Lead Senior Consultant & Trainer" },
-        { img: imgBg16, name: "Ms. Catherine Weru", role: "Senior Consultant" },
-    ];
+interface TeamSliderOneProps {
+    teamMembers: TeamMemberData[];
+}
+
+export default function TeamSliderOne({ teamMembers }: TeamSliderOneProps) {
+    if (!teamMembers.length) return null;
 
     return (
         <div className="container">
@@ -43,10 +40,16 @@ export default function TeamSliderOne() {
                 }}
                 className="team-swiper"
             >
-                {teamMembers.map((member, index) => (
-                    <SwiperSlide key={index}>
+                {teamMembers.map((member) => (
+                    <SwiperSlide key={member._id}>
                         <div className="team-card">
-                            <Image src={member.img} alt={member.name} className="h-auto" />
+                            <Image
+                                src={member.photo}
+                                alt={member.name}
+                                className="h-auto"
+                                width={400}
+                                height={450}
+                            />
 
                             <div className="social-nav">
                                 <a href="#"><i className="ti ti-brand-linkedin"></i></a>
@@ -73,5 +76,5 @@ export default function TeamSliderOne() {
                 <div className="team-pagination"></div>
             </div>
         </div>
-    )
+    );
 }

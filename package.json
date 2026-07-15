@@ -6,31 +6,43 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:admin":   "node scripts/seedAdmin.js",
+    "seed:content": "node scripts/seedContent.js",
+    "seed:sample":  "node scripts/seedSampleContent.js"
   },
   "dependencies": {
     "@fancyapps/ui": "^6.1.0",
     "@popperjs/core": "^2.11.8",
     "autoprefixer": "^10.4.21",
+    "bcryptjs": "^3.0.3",
     "bootstrap": "^5.3.8",
+    "cloudinary": "^2.10.0",
     "imagesloaded": "^5.0.0",
     "isotope-layout": "^3.0.6",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.7.3",
     "next": "^15.3.5",
     "postcss": "^8.5.6",
     "react": "19.1.0",
     "react-countup": "^6.5.3",
     "react-dom": "19.1.0",
     "sass": "^1.93.2",
-    "swiper": "^12.0.3"
+    "swiper": "^12.0.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/bcryptjs": "^2.4.6",
     "@types/isotope-layout": "^3.0.15",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^16.6.1",
     "eslint": "^9",
     "eslint-config-next": "15.5.6",
+    "tsx": "^4.23.0",
     "typescript": "^5"
   }
 }
