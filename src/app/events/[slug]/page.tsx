@@ -345,28 +345,44 @@ export default async function EventDetailPage({ params }: PageProps) {
                                 {/* Divider */}
                                 <hr style={{ margin: "1.25rem 0", borderColor: "#f0f0f0" }} />
 
-                                {/* Register button */}
-                                {event.registrationLink ? (
-                                    <a
-                                        href={event.registrationLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn-primary"
-                                        style={{ width: "100%", textAlign: "center", display: "block" }}
-                                    >
-                                        <span>Register Now</span>
-                                        <span>Register Now</span>
-                                    </a>
-                                ) : (
-                                    <Link
-                                        href="/contact"
-                                        className="btn btn-primary"
-                                        style={{ width: "100%", textAlign: "center", display: "block" }}
-                                    >
-                                        <span>Contact to Register</span>
-                                        <span>Contact to Register</span>
-                                    </Link>
-                                )}
+                                {/* Register button — hidden for past events */}
+                                {(() => {
+                                    const today = new Date(); today.setHours(0, 0, 0, 0);
+                                    const isPast = new Date(event.date) < today;
+                                    if (isPast) return (
+                                        <div style={{
+                                            width: "100%", textAlign: "center", padding: "0.75rem",
+                                            background: "#f3f4f6", borderRadius: "10px",
+                                            color: "#6b7280", fontSize: "0.85rem", fontStyle: "italic",
+                                            display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem",
+                                        }}>
+                                            <i className="ti ti-clock-off" style={{ fontSize: "1rem" }} />
+                                            This event has ended
+                                        </div>
+                                    );
+                                    return event.registrationLink ? (
+                                        <a
+                                            href={event.registrationLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-primary"
+                                            style={{ width: "100%", textAlign: "center", display: "block" }}
+                                        >
+                                            <span>Register Now</span>
+                                            <span>Register Now</span>
+                                        </a>
+                                    ) : (
+                                        <Link
+                                            href="/contact"
+                                            className="btn btn-primary"
+                                            style={{ width: "100%", textAlign: "center", display: "block" }}
+                                        >
+                                            <span>Contact to Register</span>
+                                            <span>Contact to Register</span>
+                                        </Link>
+                                    );
+                                })()}
+
                             </div>
 
                             {/* Contact nudge card (matching service-info-card style) */}

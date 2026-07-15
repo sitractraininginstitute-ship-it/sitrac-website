@@ -1,5 +1,5 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import GenericCRUD from "@/components/admin/GenericCRUD";
+import AdminEventsClient from "@/components/admin/AdminEventsClient";
 import { connectToDatabase } from "@/lib/mongodb";
 import EventModel from "@/models/Event";
 
@@ -22,6 +22,7 @@ const FIELDS = [
 
 export default async function AdminEventsPage() {
     await connectToDatabase();
+    // Sort all events: upcoming first (ascending), then past (descending)
     const docs = await EventModel.find().sort({ date: -1 }).lean();
     const items = docs.map((d) => ({
         ...d,
@@ -31,15 +32,8 @@ export default async function AdminEventsPage() {
 
     return (
         <AdminLayout>
-            <GenericCRUD
-                title="Events"
-                apiBase="/api/events"
-                fields={FIELDS}
-                items={items}
-                displayKey="title"
-                slugBased={true}
-                slugKey="slug"
-            />
+            <AdminEventsClient items={items} fields={FIELDS} />
         </AdminLayout>
     );
 }
+

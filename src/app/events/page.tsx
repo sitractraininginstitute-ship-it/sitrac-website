@@ -40,12 +40,12 @@ export default async function EventsPage() {
 
     try {
         await connectToDatabase();
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
 
+        // Fetch ALL events (past + upcoming) — the client component handles the
+        // Upcoming / Past toggle. Calendar navigation also needs past events.
         const docs = await EventModel
-            .find({ date: { $gte: today } })
-            .sort({ date: 1 })
+            .find()
+            .sort({ date: 1 })   // ascending; client reverses past events on its own
             .lean();
 
         events = docs.map((e) => ({
@@ -65,6 +65,7 @@ export default async function EventsPage() {
     } catch (err) {
         console.error("EventsPage: failed to load events", err);
     }
+
 
     const breadcrumbItems = [{ label: "Events" }];
 

@@ -28,6 +28,13 @@ function fmtDate(iso: string): string {
     return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 
+/** True if the event date is strictly in the past (before today midnight) */
+function isPastEvent(iso: string): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return new Date(iso) < today;
+}
+
 // Only use next/image for known-safe hosts (must match next.config.ts remotePatterns)
 const SAFE_IMAGE_HOSTS = ["res.cloudinary.com", "images.unsplash.com"];
 function isSafeImageUrl(url: string): boolean {
@@ -138,7 +145,7 @@ function EventCard({ event }: { event: EventData }) {
                         </p>
                     )}
 
-                    <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginTop: "auto", paddingTop: "0.5rem" }}>
+                    <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginTop: "auto", paddingTop: "0.5rem", alignItems: "center" }}>
                         <button
                             onClick={() => setExpanded(!expanded)}
                             style={{
@@ -161,7 +168,8 @@ function EventCard({ event }: { event: EventData }) {
                         >
                             View Details <i className="ti ti-arrow-right" />
                         </Link>
-                        {event.registrationLink && (
+                        {/* Hide Register button for past events */}
+                        {!isPastEvent(event.date) && event.registrationLink && (
                             <a
                                 href={event.registrationLink}
                                 target="_blank"
@@ -175,6 +183,14 @@ function EventCard({ event }: { event: EventData }) {
                             >
                                 <i className="ti ti-external-link" /> Register
                             </a>
+                        )}
+                        {isPastEvent(event.date) && (
+                            <span style={{
+                                fontSize: "0.75rem", color: "#9ca3af", fontStyle: "italic",
+                                display: "inline-flex", alignItems: "center", gap: "0.3rem",
+                            }}>
+                                <i className="ti ti-clock-off" /> This event has ended
+                            </span>
                         )}
                     </div>
                 </div>
@@ -433,7 +449,8 @@ function CalendarEventRow({ event }: { event: EventData }) {
                 >
                     More Info <i className="ti ti-arrow-right" />
                 </Link>
-                {event.registrationLink && (
+                {/* Hide Register for past events in calendar day-click list */}
+                {!isPastEvent(event.date) && event.registrationLink && (
                     <a
                         href={event.registrationLink}
                         target="_blank" rel="noopener noreferrer"
@@ -447,6 +464,11 @@ function CalendarEventRow({ event }: { event: EventData }) {
                     >
                         Register
                     </a>
+                )}
+                {isPastEvent(event.date) && (
+                    <span style={{ fontSize: "0.68rem", color: "#9ca3af", fontStyle: "italic", whiteSpace: "nowrap" }}>
+                        Ended
+                    </span>
                 )}
             </div>
         </div>
@@ -489,10 +511,28 @@ interface Props {
 }
 
 export default function EventsSection({ events }: Props) {
-    const [view,     setView]     = useState<"list" | "calendar">("list");
-    const [category, setCategory] = useState<string>("All");
+    const [view,       setView]       = useState<"list" | "calendar">("list");
+    const [category,   setCategory]   = useState<string>("All");
+    const [timeFilter, setTimeFilter] = useState<"upcoming" | "past">("upcoming");
 
-    const filtered = useMemo(() =>
+    // Split events by time — used for the list view toggle
+    const today = useMemo(() => {
+        const d = new Date(); d.setHours(0, 0, 0, 0); return d;
+    }, []);
+
+    const filtered = useMemo(() => {
+        const byCat = category === "All" ? events : events.filter(e => e.category === category);
+        if (timeFilter === "upcoming") {
+            // date >= today, already sorted ascending from server
+            return byCat.filter(e => new Date(e.date) >= today);
+        } else {
+            // date < today, reverse so most recent past event comes first
+            return byCat.filter(e => new Date(e.date) < today).reverse();
+        }
+    }, [events, category, timeFilter, today]);
+
+    // Calendar always sees ALL events (unaffected by time filter)
+    const calendarEvents = useMemo(() =>
         category === "All" ? events : events.filter(e => e.category === category),
         [events, category]
     );
@@ -525,14 +565,35 @@ export default function EventsSection({ events }: Props) {
                         ))}
                     </div>
 
-                    {/* View toggle */}
-                    <div style={{ display: "flex", gap: "0.4rem", background: "#f3f4f6", borderRadius: "10px", padding: "0.3rem" }}>
-                        <button onClick={() => setView("list")} style={toggleBtnStyle(view === "list")}>
-                            <i className="ti ti-list"></i> List
-                        </button>
-                        <button onClick={() => setView("calendar")} style={toggleBtnStyle(view === "calendar")}>
-                            <i className="ti ti-calendar"></i> Calendar
-                        </button>
+                    {/* Right-hand controls: time filter + view toggle */}
+                    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+                        {/* Upcoming / Past toggle — only meaningful for list view */}
+                        {view === "list" && (
+                            <div style={{ display: "flex", gap: "0.3rem", background: "#f3f4f6", borderRadius: "10px", padding: "0.25rem" }}>
+                                <button
+                                    onClick={() => setTimeFilter("upcoming")}
+                                    style={toggleBtnStyle(timeFilter === "upcoming")}
+                                >
+                                    <i className="ti ti-calendar-up"></i> Upcoming
+                                </button>
+                                <button
+                                    onClick={() => setTimeFilter("past")}
+                                    style={toggleBtnStyle(timeFilter === "past")}
+                                >
+                                    <i className="ti ti-history"></i> Past
+                                </button>
+                            </div>
+                        )}
+
+                        {/* List / Calendar view toggle */}
+                        <div style={{ display: "flex", gap: "0.4rem", background: "#f3f4f6", borderRadius: "10px", padding: "0.3rem" }}>
+                            <button onClick={() => setView("list")} style={toggleBtnStyle(view === "list")}>
+                                <i className="ti ti-list"></i> List
+                            </button>
+                            <button onClick={() => setView("calendar")} style={toggleBtnStyle(view === "calendar")}>
+                                <i className="ti ti-calendar"></i> Calendar
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -557,14 +618,14 @@ export default function EventsSection({ events }: Props) {
                     <>
                         {/* Count label */}
                         <p style={{ color: "#6b7280", fontSize: "0.88rem", marginBottom: "1.25rem" }}>
-                            {filtered.length} upcoming {filtered.length === 1 ? "event" : "events"}
+                            {filtered.length} {timeFilter === "past" ? "past" : "upcoming"} {filtered.length === 1 ? "event" : "events"}
                             {category !== "All" && ` in ${category}`}
                         </p>
 
                         {filtered.length === 0 ? (
                             <div style={{ textAlign: "center", padding: "3rem", color: "#9ca3af" }}>
                                 <i className="ti ti-filter-off" style={{ fontSize: "2.5rem", display: "block", marginBottom: "0.75rem" }}></i>
-                                No {category} events scheduled right now.
+                                No {category !== "All" ? category : ""} {timeFilter === "past" ? "past" : "upcoming"} events{category !== "All" ? " in this category" : ""}.
                             </div>
                         ) : (
                             <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -575,8 +636,8 @@ export default function EventsSection({ events }: Props) {
                         )}
                     </>
                 ) : (
-                    // Calendar only shows all events for the selected month — category filter retained
-                    <CalendarView events={filtered} />
+                    // Calendar shows ALL events for any month — unaffected by time filter
+                    <CalendarView events={calendarEvents} />
                 )}
             </div>
             <div className="divider" />
