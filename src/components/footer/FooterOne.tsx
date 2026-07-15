@@ -16,69 +16,71 @@ export default function FooterOne() {
 
             <div className="container">
                 <div className="row g-5 g-md-4 g-xl-5">
-                    {/*-- Footer Card --*/}
+                    {/*-- Footer Card: Brand --*/}
                     <div className="col-12 col-sm-6 col-md-4 col-xl-5">
                         <div className="footer-card me-lg-5">
                             {/*-- Footer Logo --*/}
                             <Link href="/" className="footer-logo mb-4">
-                                <Image src={logo} alt="" className="h-auto"/>
+                                <Image src={logo} alt="SITRAC Training Institute" className="h-auto"/>
                             </Link>
                             <p>SITRAC delivers training and consultancy solutions that strengthen institutions, improve governance, and build capacity across Africa.</p>
                             {/*-- Social Nav --*/}
                             <div className="social-nav">
-                                <a href="#">
+                                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                                     <i className="ti ti-brand-facebook"></i>
                                 </a>
-                                <a href="#">
+                                <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                                     <i className="ti ti-brand-linkedin"></i>
                                 </a>
-                                <a href="#">
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
                                     <i className="ti ti-brand-x"></i>
                                 </a>
-                                <a href="#">
+                                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                                     <i className="ti ti-brand-instagram"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    {/*-- Footer Card --*/}
+                    {/*-- Footer Card: Quick Links --*/}
                     <div className="col-12 col-sm-6 col-md">
                         <div className="footer-card">
                             <h5 className="mb-4 text-white">Quick Links</h5>
                             <ul className="list-unstyled footer-nav">
-                                <li><a href="#"><span></span>About Us</a></li>
-                                <li><a href="#"><span></span>Our Team</a></li>
-                                <li><a href="#"><span></span>Projects & Impact</a></li>
-                                <li><a href="#"><span></span>Publications & Reports</a></li>
-                                <li><a href="#"><span></span>Contact Us</a></li>
+                                <li><Link href="/about-us"><span></span>About Us</Link></li>
+                                <li><Link href="/team"><span></span>Our Team</Link></li>
+                                <li><Link href="/projects"><span></span>Projects &amp; Impact</Link></li>
+                                <li><Link href="/blog"><span></span>Publications &amp; Reports</Link></li>
+                                <li><Link href="/contact"><span></span>Contact Us</Link></li>
                             </ul>
                         </div>
                     </div>
 
-                    {/*-- Footer Card --*/}
+                    {/*-- Footer Card: Our Programmes --*/}
                     <div className="col-12 col-sm-6 col-md">
                         <div className="footer-card">
-                            <h5 className="mb-4 text-white">Services</h5>
+                            <h5 className="mb-4 text-white">Our Programmes</h5>
                             <ul className="list-unstyled footer-nav">
-                                <li><a href="#"><span></span>Capacity Building</a></li>
-                                <li><a href="#"><span></span>Institutional Development</a></li>
-                                <li><a href="#"><span></span>Governance & Strategy Support</a></li>
-                                <li><a href="#"><span></span>Community Development</a></li>
-                                <li><a href="#"><span></span>Monitoring & Evaluation</a></li>
+                                <li><Link href="/services/claims-management-masterclass"><span></span>Claims Management</Link></li>
+                                <li><Link href="/services/modern-customer-service-training"><span></span>Customer Service Training</Link></li>
+                                <li><Link href="/services/retirement-readiness-programme"><span></span>Retirement Readiness</Link></li>
+                                <li><Link href="/services/administration-training"><span></span>Administration Training</Link></li>
+                                <li><Link href="/services/finance-training"><span></span>Finance Training</Link></li>
+                                <li><Link href="/services"><span></span>View All Programmes →</Link></li>
                             </ul>
                         </div>
                     </div>
 
-                    {/*-- Footer Card --*/}
+                    {/*-- Footer Card: Information --*/}
                     <div className="col-12 col-sm-6 col-md">
                         <div className="footer-card">
                             <h5 className="mb-4 text-white">Information</h5>
                             <ul className="list-unstyled footer-nav">
-                                <li><a href="#"><span></span>Our Approach</a></li>
-                                <li><a href="#"><span></span>Privacy Policy</a></li>
-                                <li><a href="#"><span></span>Terms &amp; Conditions</a></li>
-                                <li><a href="#"><span></span>FAQs</a></li>
+                                <li><Link href="/about-us"><span></span>Our Approach</Link></li>
+                                <li><Link href="/privacy-policy"><span></span>Privacy Policy</Link></li>
+                                <li><Link href="/terms-conditions"><span></span>Terms &amp; Conditions</Link></li>
+                                <li><Link href="/faqs"><span></span>FAQs</Link></li>
+                                <li><Link href="/events"><span></span>Upcoming Events</Link></li>
                             </ul>
                         </div>
                     </div>
@@ -91,9 +93,14 @@ export default function FooterOne() {
             {/*-- Copyright --*/}
             <div className="container">
                 <div className="copyright-section">
-                    <p className="mb-0 copyright">Copyright &copy; <span id="year">2026</span>
-                        <a href="#">SITRAC</a>
-                        All rights reserved.</p>
+                    <p className="mb-0 copyright">Copyright &copy; <span id="year">{new Date().getFullYear()}</span>{" "}
+                        <Link href="/">SITRAC Training Institute</Link>.{" "}
+                        All rights reserved.
+                        {" · "}
+                        <Link href="/privacy-policy" style={{ opacity: 0.7 }}>Privacy</Link>
+                        {" · "}
+                        <Link href="/terms-conditions" style={{ opacity: 0.7 }}>Terms</Link>
+                    </p>
                 </div>
             </div>
         </footer>
