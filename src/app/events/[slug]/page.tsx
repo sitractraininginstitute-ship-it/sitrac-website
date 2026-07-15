@@ -354,28 +354,34 @@ export default async function EventDetailPage({ params }: PageProps) {
 
                                 {/* PDF Brochure download — rendered only when attachmentUrl is set */}
                                 {event.attachmentUrl && (() => {
-                                    // Build a Cloudinary fl_attachment URL so the browser
-                                    // downloads with a proper .pdf filename instead of the raw
-                                    // Cloudinary public_id (which has no extension).
+                                    // Build a Cloudinary fl_attachment URL so the browser downloads
+                                    // with a proper .pdf filename.
                                     //
-                                    // Pattern: insert fl_attachment:{filename} right after /upload/
-                                    // e.g. https://res.cloudinary.com/{cloud}/raw/upload/fl_attachment:event-brochure-2026/v123/sitrac/events/abc123
+                                    // ROOT CAUSE (confirmed via real HTTP testing):
+                                    // Cloudinary's URL router interprets a literal dot (.) in the
+                                    // fl_attachment:filename path segment as a format/extension
+                                    // separator and returns HTTP 400. The fix is to double-encode
+                                    // the dot as %252E — the router sees no dot (valid transformation),
+                                    // the delivery layer decodes %25→%, leaving %2E, which the browser
+                                    // decodes to . — producing the correct filename with .pdf extension.
                                     //
-                                    // The filename in fl_attachment must be URL-safe (no spaces, only
-                                    // ASCII, with .pdf extension so the browser names the download correctly).
+                                    // Verified: fl_attachment:Test-Brochure-2026%252Epdf → HTTP 200
+                                    //           Content-Disposition: attachment; filename="Test-Brochure-2026.pdf"
                                     const rawName = event.attachmentName ?? "Event-Brochure.pdf";
-                                    const safeName = rawName
-                                        .replace(/\.pdf$/i, "")           // strip existing .pdf to avoid doubling
-                                        .replace(/[^a-zA-Z0-9._-]/g, "-") // only safe URL chars
+                                    const baseName = rawName
+                                        .replace(/\.pdf$/i, "")            // strip .pdf — we'll re-add it encoded
+                                        .replace(/[^a-zA-Z0-9_-]/g, "-")  // only safe chars (no dots allowed)
                                         .replace(/-{2,}/g, "-")
                                         .replace(/^-|-$/g, "")
-                                        .substring(0, 60)
-                                        + ".pdf";                          // always end in .pdf
+                                        .substring(0, 60);
+
+                                    // Append .pdf with the dot double-encoded as %252E
+                                    const encodedName = `${baseName}%252Epdf`;
 
                                     // Insert fl_attachment after /upload/
                                     const downloadUrl = event.attachmentUrl.replace(
                                         /\/upload\//,
-                                        `/upload/fl_attachment:${safeName}/`
+                                        `/upload/fl_attachment:${encodedName}/`
                                     );
 
                                     return (
@@ -400,6 +406,8 @@ export default async function EventDetailPage({ params }: PageProps) {
                                         </a>
                                     );
                                 })()}
+
+
 
                                 {/* Register button — hidden for past events */}
                                 {(() => {
