@@ -84,23 +84,47 @@ export async function POST(request: NextRequest) {
     //    PDFs must use resource_type "raw" — Cloudinary rejects PDF uploads
     //    under the image resource type.
     try {
+        // For PDFs: derive a sanitized filename for use in the Cloudinary public_id.
+        // When uploading via data URI (base64), Cloudinary ignores `use_filename`
+        // because there is no filename embedded in the data URI — `filename_override`
+        // explicitly sets the public_id stem, giving the stored asset a human-readable
+        // name (e.g. "sitrac-claims-masterclass-2026") instead of a random hash.
+        const sanitizedName = isPdf
+            ? file.name
+                .replace(/\.pdf$/i, "")          // strip .pdf — Cloudinary adds it for raw
+                .toLowerCase()
+                .replace(/[^a-z0-9._-]/g, "-")   // only safe URL chars
+                .replace(/-{2,}/g, "-")           // collapse repeated hyphens
+                .replace(/^-|-$/g, "")            // trim leading/trailing hyphens
+                .substring(0, 80)                 // keep it reasonable
+            : undefined;
+
         const result = await cloudinary.uploader.upload(dataUri, {
             folder,
             use_filename:      true,
             unique_filename:   true,
             overwrite:         false,
-            ...(isPdf ? { resource_type: "raw" as const } : {}),
+            ...(isPdf
+                ? {
+                    resource_type:     "raw" as const,
+                    filename_override: sanitizedName,
+                }
+                : {}
+            ),
         });
 
         return jsonOk(
             {
-                url:      result.secure_url,
-                publicId: result.public_id,
-                folder:   result.folder,
-                width:    result.width,
-                height:   result.height,
-                format:   result.format,
-                bytes:    result.bytes,
+                url:          result.secure_url,
+                publicId:     result.public_id,
+                folder:       result.folder,
+                width:        result.width,
+                height:       result.height,
+                format:       result.format,
+                bytes:        result.bytes,
+                // For PDFs: expose the sanitized name so callers can
+                // construct fl_attachment download URLs client-side if needed.
+                ...(isPdf ? { originalName: sanitizedName } : {}),
             },
             201
         );

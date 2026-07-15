@@ -353,27 +353,53 @@ export default async function EventDetailPage({ params }: PageProps) {
                                 <hr style={{ margin: "1.25rem 0", borderColor: "#f0f0f0" }} />
 
                                 {/* PDF Brochure download — rendered only when attachmentUrl is set */}
-                                {event.attachmentUrl && (
-                                    <a
-                                        href={event.attachmentUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                            display: "flex", alignItems: "center", gap: "0.5rem",
-                                            width: "100%", padding: "0.7rem 1rem",
-                                            background: "#f8fafc", borderRadius: "10px",
-                                            border: "1px solid #e2e8f0",
-                                            color: "#052E26", textDecoration: "none",
-                                            fontWeight: 600, fontSize: "0.88rem",
-                                            marginBottom: "0.75rem",
-                                            transition: "background 0.15s",
-                                        }}
-                                    >
-                                        <i className="ti ti-file-type-pdf" style={{ fontSize: "1.2rem", color: "#dc2626", flexShrink: 0 }} />
-                                        {event.attachmentName ?? "Download Event Details (PDF)"}
-                                        <i className="ti ti-download" style={{ marginLeft: "auto", fontSize: "0.95rem", color: "#6b7280" }} />
-                                    </a>
-                                )}
+                                {event.attachmentUrl && (() => {
+                                    // Build a Cloudinary fl_attachment URL so the browser
+                                    // downloads with a proper .pdf filename instead of the raw
+                                    // Cloudinary public_id (which has no extension).
+                                    //
+                                    // Pattern: insert fl_attachment:{filename} right after /upload/
+                                    // e.g. https://res.cloudinary.com/{cloud}/raw/upload/fl_attachment:event-brochure-2026/v123/sitrac/events/abc123
+                                    //
+                                    // The filename in fl_attachment must be URL-safe (no spaces, only
+                                    // ASCII, with .pdf extension so the browser names the download correctly).
+                                    const rawName = event.attachmentName ?? "Event-Brochure.pdf";
+                                    const safeName = rawName
+                                        .replace(/\.pdf$/i, "")           // strip existing .pdf to avoid doubling
+                                        .replace(/[^a-zA-Z0-9._-]/g, "-") // only safe URL chars
+                                        .replace(/-{2,}/g, "-")
+                                        .replace(/^-|-$/g, "")
+                                        .substring(0, 60)
+                                        + ".pdf";                          // always end in .pdf
+
+                                    // Insert fl_attachment after /upload/
+                                    const downloadUrl = event.attachmentUrl.replace(
+                                        /\/upload\//,
+                                        `/upload/fl_attachment:${safeName}/`
+                                    );
+
+                                    return (
+                                        <a
+                                            href={downloadUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                display: "flex", alignItems: "center", gap: "0.5rem",
+                                                width: "100%", padding: "0.7rem 1rem",
+                                                background: "#f8fafc", borderRadius: "10px",
+                                                border: "1px solid #e2e8f0",
+                                                color: "#052E26", textDecoration: "none",
+                                                fontWeight: 600, fontSize: "0.88rem",
+                                                marginBottom: "0.75rem",
+                                                transition: "background 0.15s",
+                                            }}
+                                        >
+                                            <i className="ti ti-file-type-pdf" style={{ fontSize: "1.2rem", color: "#dc2626", flexShrink: 0 }} />
+                                            {event.attachmentName ?? "Download Event Details (PDF)"}
+                                            <i className="ti ti-download" style={{ marginLeft: "auto", fontSize: "0.95rem", color: "#6b7280" }} />
+                                        </a>
+                                    );
+                                })()}
 
                                 {/* Register button — hidden for past events */}
                                 {(() => {
